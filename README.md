@@ -2,7 +2,7 @@
 The table is a helper function to print the table. You can print the table bypassing the Any data! 
 [e.g., 1d array, 2d array, and dictionary]
 
-It inspired by javascript console.table. I'm sure if you practice coding interviews, it helps you a lot. You don't need to struggle for checking results using a build-in print function!
+It inspired by `javascript` `console.table`. I'm sure if you practice coding interviews, it helps you a lot. You don't need to struggle for checking results using a build-in print function!
 
 ## Usage
 The table is only supported SPM (Swift Package Management)
