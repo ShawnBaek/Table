@@ -7,11 +7,6 @@ It inspired by `javascript` `console.table`.
 I'm sure if you practice coding interviews, it helps you a lot. You don't need to struggle for checking results using a build-in print function!
 
 ## Usage
-The table is only supported SPM (Swift Package Management)
-
-![Add Swift Package](Images/spm.png)
-![Check Table Version](Images/installed.png)
-![Done](Images/package.png)
 
 ```swift
 import Table
@@ -90,6 +85,14 @@ print(table: ["1": 1, 2: "Hellow?", 1.2: 0, "I'm Table": [1, 2, 3, 2, 1]], heade
 
 
 ```
+
+## SPM Support
+
+The table is only supported SPM (Swift Package Management)
+
+![Add Swift Package](Images/spm.png)
+![Check Table Version](Images/installed.png)
+![Done](Images/package.png)
 
 ## What's the next step?!
 I'm going to support more types!
