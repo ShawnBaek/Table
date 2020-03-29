@@ -85,6 +85,33 @@ print(table: ["1": 1, 2: "Hellow?", 1.2: 0, "I'm Table": [1, 2, 3, 2, 1]], heade
 
 ```
 
+## Support Distribution
+The default distribution is `fillProportionally`.
+
+```swift
+print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"])
+```
+```swift
++----+---------+-----+-----+
+|Wed |Thu      |Fri  |Sat  |
++----+---------+-----+-----+
+|Good|Very Good|Happy|Cool!|
++----+---------+-----+-----+
+```
+
+But It can be set by `fillEqually` like below
+
+```swift
+print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"], distribution: .fillEqually)
+```
+```swift
++---------+---------+---------+---------+
+|Wed      |Thu      |Fri      |Sat      |
++---------+---------+---------+---------+
+|Good     |Very Good|Happy    |Cool!    |
++---------+---------+---------+---------+
+```
+
 ## SPM Support
 
 The table is only supported SPM (Swift Package Management)
