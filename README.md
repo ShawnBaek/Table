@@ -162,7 +162,7 @@ I'm going to support more types!
 - emoticon / unicode
 
 ## Unit Tests
-I'm going to add testCases next time.
+I'm going to add testCases for dictionary next time.
 
 ## Contributing to Table
 Contributions to the Table are welcomed and encouraged!
