@@ -124,6 +124,20 @@ The table is only supported SPM (Swift Package Management)
 ![Check Table Version](Images/installed.png)
 ![Done](Images/package.png)
 
+## iPad Playground Book
+I built playgroundbook using nef. You can check `./playgroundbook` folder.
+
+```console
+Clean up generated files for building ✓
+Creating swift playground structure (Table) ✓
+Downloading dependencies...... ✓
+    • Table
+Get modules from repositories...... ✓
+    • Table
+Building Swift Playground... ✓
+🙌 rendered Playground Book in './Table/playgroundbook/Table.playgroundbook'
+```
+
 ## What's the next step?!
 I'm going to support more types!
 - tuple
