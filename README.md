@@ -144,7 +144,7 @@ Copy `Table.playgroundbook` into your `iCloud` folder like below and then open i
 
 ![How to Install](Images/icloud.png)
 
-You use it on your iPad Playground 😎
+You can use it on your iPad Playground 😎
 
 ![Print Table](Images/iPadB.PNG)
 
