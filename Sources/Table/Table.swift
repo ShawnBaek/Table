@@ -5,23 +5,23 @@
 //  Created by BaekSungwook on 3/5/20.
 //  Copyright © 2020 BaekSungwook. All rights reserved.
 //
-
-//TODO:- Support Spacing Option
 public enum TableSpacing {
     case fillProportionally
-    case fillEqually
+    case equalSpacing
 }
 /// - Parameters:
 ///   - table: Zero or more items to print.
 ///   - header: A string to print header on table.
 ///   - terminator: A string to print end of function.
+///   - distribution: A spacing for item
 //public func print(table data: Any, header: [String]? = nil)
-public func print(
+@discardableResult public func print(
     table data: Any,
     header: [String]? = nil,
     distribution: TableSpacing = .fillProportionally,
     terminator: String = ""
-) {
+) -> String {
+    var result = ""
     let mirrorObj = Mirror(reflecting: data)
     if mirrorObj.subjectType == [String].self {
         let inputData = data as! [String]
@@ -32,10 +32,11 @@ public func print(
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
     else if mirrorObj.subjectType == [Int].self {
         let inputData = data as! [Int]
@@ -46,10 +47,11 @@ public func print(
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
     else if mirrorObj.subjectType == [Double].self {
         let inputData = data as! [Double]
@@ -60,10 +62,11 @@ public func print(
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
     else if mirrorObj.subjectType == [AnyHashable: Any].self {
         let inputData = data as! [AnyHashable: Any]
@@ -78,10 +81,11 @@ public func print(
                     info.maxValueWidth = max(info.maxValueWidth, title.count)
                 }
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
     else if mirrorObj.subjectType == [[String]].self {
         let inputData = data as! [[String]]
@@ -92,10 +96,11 @@ public func print(
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
     else if mirrorObj.subjectType == [[Int]].self {
         let inputData = data as! [[Int]]
@@ -106,10 +111,11 @@ public func print(
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
     else if mirrorObj.subjectType == [[Double]].self {
         let inputData = data as! [[Double]]
@@ -120,28 +126,25 @@ public func print(
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            print(header: header, info: info, distribution: distribution)
+            result.append(print(header: header, info: info, distribution: distribution))
         }
-        printTable(data: inputData, info: info, distribution: distribution)
+        result.append(printTable(data: inputData, info: info, distribution: distribution))
         print(terminator)
+        result.append(terminator)
     }
+    return result
 }
 
-private func print(
+@discardableResult private func print(
     header: [String],
     info: (numberOfItem: Int, maxWidth: Int, widthInfo: [Int: Int]),
     distribution: TableSpacing
-) {
-    let fullWidth = distribution == .fillProportionally ?
-        info.widthInfo.reduce(0, { $0 + $1.value }) :
-        info.maxWidth * info.numberOfItem
-    let horizontalLine = horizontal(
-        numberOfItems: info.numberOfItem,
-        width: info.widthInfo,
-        length: fullWidth,
-        distribution: distribution
-    )
+) -> String {
+    var result = ""
+    let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
+    let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
     print(horizontalLine)
+    result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<header.count {
         let width = distribution == .fillProportionally ? info.widthInfo[i]! : info.maxWidth
@@ -150,20 +153,19 @@ private func print(
         row += item
     }
     print(row)
+    result.append("\(row)\n")
+    return result
 }
 
-private func print(
+@discardableResult private func print(
     header: [String],
     info: (numberOfItem: Int, maxKeyWidth: Int, maxValueWidth: Int, widthInfo: [String: Int]),
     distribution: TableSpacing
-) {
-    let horizontalLine = horizontal(
-        numberOfItems: info.numberOfItem,
-        keyWidth: info.maxKeyWidth,
-        valueWidth: info.maxValueWidth,
-        distribution: distribution
-    )
+) -> String {
+    var result = ""
+    let horizontalLine = horizontal(numberOfItems: info.numberOfItem, keyWidth: info.maxKeyWidth, valueWidth: info.maxValueWidth, distribution: distribution)
     print(horizontalLine)
+    result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<header.count {
         var itemCount = 0
@@ -178,19 +180,23 @@ private func print(
         row += item
     }
     print(row)
+    result.append("\(row)\n")
+    return result
 }
 
-private func printTable(
+@discardableResult private func printTable(
     data: [AnyHashable: Any],
     info: (numberOfItem: Int, maxKeyWidth: Int, maxValueWidth: Int, widthInfo: [String : Int]),
     distribution: TableSpacing
-) {
+) -> String {
+    var result = ""
     let horizontalLine = horizontal(
         numberOfItems: info.numberOfItem,
         keyWidth: info.maxKeyWidth,
         valueWidth: info.maxValueWidth, distribution: distribution
     )
     print(horizontalLine)
+    result.append("\(horizontalLine)\n")
     let maxWidth = max(info.maxKeyWidth, info.maxValueWidth)
     for key in data.keys {
         var row = "|"
@@ -206,23 +212,21 @@ private func printTable(
         row += item
         print(row)
         print(horizontalLine)
+        result.append("\(row)\n")
+        result.append("\(horizontalLine)\n")
     }
+    return result
 }
 
-private func printTable<Item: LosslessStringConvertible>(
+@discardableResult private func printTable<Item: LosslessStringConvertible>(
     data: [Item],
     info: (numberOfItem: Int, maxWidth: Int, widthInfo: [Int: Int]),
-    distribution: TableSpacing) {
-    let fullWidth = distribution == .fillProportionally ?
-        info.widthInfo.reduce(0, { $0 + $1.value }) :
-        info.maxWidth * info.numberOfItem
-    let horizontalLine = horizontal(
-        numberOfItems: info.numberOfItem,
-        width: info.widthInfo,
-        length: fullWidth,
-        distribution: distribution
-    )
+    distribution: TableSpacing) -> String {
+    var result = ""
+    let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
+    let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
     print(horizontalLine)
+    result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<info.numberOfItem {
         let width = distribution == .fillProportionally ? info.widthInfo[i]! : info.maxWidth
@@ -232,23 +236,21 @@ private func printTable<Item: LosslessStringConvertible>(
     }
     print(row)
     print(horizontalLine)
+    result.append("\(row)\n")
+    result.append("\(horizontalLine)\n")
+    return result
 }
 
-private func printTable<Item: LosslessStringConvertible>(
+@discardableResult private func printTable<Item: LosslessStringConvertible>(
     data: [[Item]],
     info: (numberOfItem: Int, maxWidth: Int, widthInfo: [Int: Int]),
     distribution: TableSpacing
-) {
-    let fullWidth = distribution == .fillProportionally ?
-        info.widthInfo.reduce(0, { $0 + $1.value }) :
-        info.maxWidth * info.numberOfItem
-    let horizontalLine = horizontal(
-        numberOfItems: info.numberOfItem,
-        width: info.widthInfo,
-        length: fullWidth,
-        distribution: distribution
-    )
+) -> String {
+    var result = ""
+    let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
+    let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
     print(horizontalLine)
+    result.append("\(horizontalLine)\n")
     for i in 0..<data.count {
         var row = "|"
         for j in 0..<info.numberOfItem {
@@ -261,7 +263,10 @@ private func printTable<Item: LosslessStringConvertible>(
         }
         print(row)
         print(horizontalLine)
+        result.append("\(row)\n")
+        result.append("\(horizontalLine)\n")
     }
+    return result
 }
 
 private func tableInfo(data: [AnyHashable: Any]) -> (
@@ -304,6 +309,7 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
     let maxWidth = String(flattened.sorted { String($0).count > String($1).count }.first!).count
     let itemCount = data.sorted{ $0.count > $1.count }.first!.count
     var maxWidthDict: [Int: Int] = [:]
+
     for i in 0..<itemCount {
         if let items = data.column(index: i) {
             let stringData = items.map {String(describing: $0)}
@@ -314,7 +320,7 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
     return (numberOfItem: itemCount, maxWidth: maxWidth, widthInfo: maxWidthDict)
 }
 
-private func horizontal(
+@discardableResult private func horizontal(
     numberOfItems: Int,
     width: [Int: Int],
     length: Int,
@@ -334,7 +340,7 @@ private func horizontal(
 }
 
 
-private func horizontal(
+@discardableResult private func horizontal(
     numberOfItems: Int,
     keyWidth: Int,
     valueWidth: Int,
@@ -344,7 +350,7 @@ private func horizontal(
     var line = distribution == .fillProportionally ?
         String(repeating: "-", count: keyWidth + valueWidth) :
         String(repeating: "-", count: maxWidth * 2)
-    
+
     line.insert("+", at: line.startIndex)
     for i in 0..<numberOfItems {
         if let index = line.lastIndex(of: "+") {
