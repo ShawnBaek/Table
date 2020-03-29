@@ -8,7 +8,7 @@
 
 //TODO:- Support Spacing Option
 public enum TableSpacing {
-    case fill
+    case fillProportionally
     case fillEqually
 }
 /// - Parameters:
