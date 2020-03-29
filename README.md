@@ -86,7 +86,7 @@ print(table: ["1": 1, 2: "Hellow?", 1.2: 0, "I'm Table": [1, 2, 3, 2, 1]], heade
 ```
 
 ## Support Distribution
-The default distribution is `equalSpacing`.
+The default distribution is `fillProportionally`.
 
 ```swift
 print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"])
@@ -99,13 +99,13 @@ print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fr
 +----+---------+-----+-----+
 ```
 
-But It can be set by `equalSpacing` like below
+But It can be set by `fillEqually` like below
 
 ```swift
 print(
     table: ["Good", "Very Good", "Happy", "Cool!"], 
     header: ["Wed", "Thu", "Fri", "Sat"], 
-    distribution: .equalSpacing
+    distribution: .fillEqually
 )
 ```
 ```swift

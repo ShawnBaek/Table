@@ -7,7 +7,7 @@
 //
 public enum TableSpacing {
     case fillProportionally
-    case equalSpacing
+    case fillEqually
 }
 /// - Parameters:
 ///   - table: Zero or more items to print.
