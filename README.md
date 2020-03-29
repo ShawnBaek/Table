@@ -32,7 +32,7 @@ print(table: [[1, 2, 3], [4, 5, 6], [7, 8, 9, 10]])
 print(table: ["1": 1, 2: "Hellow?", 1.2: 0, "I'm Table": [1, 2, 3, 2, 1]], header: ["key", "value"])
 ```
 
-```console
+```swift
 +----+---------+-----+-----+
 |Wed |Thu      |Fri  |Sat  |
 +----+---------+-----+-----+
@@ -102,7 +102,11 @@ print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fr
 But It can be set by `fillEqually` like below
 
 ```swift
-print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"], distribution: .fillEqually)
+print(
+    table: ["Good", "Very Good", "Happy", "Cool!"], 
+    header: ["Wed", "Thu", "Fri", "Sat"], 
+    distribution: .fillEqually
+)
 ```
 ```swift
 +---------+---------+---------+---------+
