@@ -164,6 +164,11 @@ I'm going to support more types!
 More support for iPad
 - show table right after panel using `LiveView`
 
+Table Style
+- ascii table
+- dashed table
+- and more
+
 ## Unit Tests
 I'm going to add testCases for dictionary next time.
 
