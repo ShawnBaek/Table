@@ -127,6 +127,15 @@ The table is only supported SPM (Swift Package Management)
 ## iPad Playground Book
 I built playgroundbook using nef. You can check `./playgroundbook` folder.
 
+Copy Table.playgroundbook into your iCloud folder like below and then open it on iPad Playground App
+![How to Install](Images/icloud.png)
+
+You use it on your iPad Playground 😎
+![Print Table](Images/iPadB.png)
+
+It also support code completion on your iPad Playground 🙌
+![Code Complete](Images/iPadA.png)
+
 ```console
 Clean up generated files for building ✓
 Creating swift playground structure (Table) ✓
