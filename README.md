@@ -1,6 +1,8 @@
 # Welcome to Table
-The table is a helper function to print the table. You can print the table bypassing the Any data! 
-[e.g., 1d array, 2d array, and dictionary]
+The table is a helper function to print the table. 
+
+You can print the table bypassing the Any data! 
+[e.g., `1d array`,` 2d array`, and `dictionary`]
 
 It inspired by `javascript` `console.table`. 
 
