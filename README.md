@@ -161,8 +161,6 @@ I'm going to support more types!
 - custom data type
 - emoticon / unicode
 
-More support for iPad
-- show table right after panel using `LiveView`
 
 Table Style
 - ascii table
