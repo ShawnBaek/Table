@@ -146,11 +146,11 @@ Copy `Table.playgroundbook` into your `iCloud` folder like below and then open i
 
 You can use it on your iPad Playground 😎
 
-![Print Table](Images/iPadB.PNG)
+![Print Table](Images/iPad.PNG)
 
-It also support code completion on your iPad Playground 🙌
-
-![Code Complete](Images/iPadA.PNG)
+<video width="320" height="240" controls>
+  <source src="Images/iPad.mp4" type="video/mp4">
+</video>
 
 
 
