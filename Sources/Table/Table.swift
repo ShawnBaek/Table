@@ -5,6 +5,8 @@
 //  Created by BaekSungwook on 3/5/20.
 //  Copyright © 2020 BaekSungwook. All rights reserved.
 //
+
+import Foundation
 public enum TableSpacing {
     case fillProportionally
     case fillEqually
@@ -55,9 +57,9 @@ public enum TableSpacing {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
@@ -70,9 +72,9 @@ public enum TableSpacing {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
@@ -85,9 +87,9 @@ public enum TableSpacing {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
@@ -104,9 +106,9 @@ public enum TableSpacing {
                     info.maxValueWidth = max(info.maxValueWidth, title.count)
                 }
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
@@ -119,9 +121,9 @@ public enum TableSpacing {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
@@ -134,9 +136,9 @@ public enum TableSpacing {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
@@ -149,24 +151,25 @@ public enum TableSpacing {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
             }
-            result.append(print(header: header, info: info, distribution: distribution))
+            result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
-        result.append(printTable(data: inputData, info: info, distribution: distribution))
+        result.append(printTable(data: inputData, info: info, distribution: distribution, stream: &stream))
         print(terminator, to: &stream)
         result.append(terminator)
     }
     return result
 }
 
-@discardableResult private func print(
+@discardableResult private func print<Stream: TextOutputStream>(
     header: [String],
     info: (numberOfItem: Int, maxWidth: Int, widthInfo: [Int: Int]),
-    distribution: TableSpacing
+    distribution: TableSpacing,
+    stream: inout Stream
 ) -> String {
     var result = ""
     let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
     let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
-    print(horizontalLine)
+    print(horizontalLine, to: &stream)
     result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<header.count {
@@ -175,19 +178,20 @@ public enum TableSpacing {
         let item = "\(header[i])\(space)|"
         row += item
     }
-    print(row)
+    print(row, to: &stream)
     result.append("\(row)\n")
     return result
 }
 
-@discardableResult private func print(
+@discardableResult private func print<Stream: TextOutputStream>(
     header: [String],
     info: (numberOfItem: Int, maxKeyWidth: Int, maxValueWidth: Int, widthInfo: [String: Int]),
-    distribution: TableSpacing
+    distribution: TableSpacing,
+    stream: inout Stream
 ) -> String {
     var result = ""
     let horizontalLine = horizontal(numberOfItems: info.numberOfItem, keyWidth: info.maxKeyWidth, valueWidth: info.maxValueWidth, distribution: distribution)
-    print(horizontalLine)
+    print(horizontalLine, to: &stream)
     result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<header.count {
@@ -202,15 +206,16 @@ public enum TableSpacing {
         let item = "\(header[i])\(space)|"
         row += item
     }
-    print(row)
+    print(row, to: &stream)
     result.append("\(row)\n")
     return result
 }
 
-@discardableResult private func printTable(
+@discardableResult private func printTable<Stream: TextOutputStream>(
     data: [AnyHashable: Any],
     info: (numberOfItem: Int, maxKeyWidth: Int, maxValueWidth: Int, widthInfo: [String : Int]),
-    distribution: TableSpacing
+    distribution: TableSpacing,
+    stream: inout Stream
 ) -> String {
     var result = ""
     let horizontalLine = horizontal(
@@ -218,7 +223,7 @@ public enum TableSpacing {
         keyWidth: info.maxKeyWidth,
         valueWidth: info.maxValueWidth, distribution: distribution
     )
-    print(horizontalLine)
+    print(horizontalLine, to: &stream)
     result.append("\(horizontalLine)\n")
     let maxWidth = max(info.maxKeyWidth, info.maxValueWidth)
     for key in data.keys {
@@ -233,22 +238,24 @@ public enum TableSpacing {
         let space = String(repeating: " ", count: valueWidth - value.count)
         let item = "\(value)\(space)|"
         row += item
-        print(row)
-        print(horizontalLine)
+        print(row, to: &stream)
+        print(horizontalLine, to: &stream)
         result.append("\(row)\n")
         result.append("\(horizontalLine)\n")
     }
     return result
 }
 
-@discardableResult private func printTable<Item: LosslessStringConvertible>(
+@discardableResult private func printTable<Item: LosslessStringConvertible, Stream: TextOutputStream>(
     data: [Item],
     info: (numberOfItem: Int, maxWidth: Int, widthInfo: [Int: Int]),
-    distribution: TableSpacing) -> String {
+    distribution: TableSpacing,
+    stream: inout Stream
+) -> String {
     var result = ""
     let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
     let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
-    print(horizontalLine)
+    print(horizontalLine, to: &stream)
     result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<info.numberOfItem {
@@ -257,22 +264,23 @@ public enum TableSpacing {
         let item = "\(data[i])\(space)|"
         row += item
     }
-    print(row)
-    print(horizontalLine)
+    print(row, to: &stream)
+    print(horizontalLine, to: &stream)
     result.append("\(row)\n")
     result.append("\(horizontalLine)\n")
     return result
 }
 
-@discardableResult private func printTable<Item: LosslessStringConvertible>(
+@discardableResult private func printTable<Item: LosslessStringConvertible, Stream: TextOutputStream>(
     data: [[Item]],
     info: (numberOfItem: Int, maxWidth: Int, widthInfo: [Int: Int]),
-    distribution: TableSpacing
+    distribution: TableSpacing,
+    stream: inout Stream
 ) -> String {
     var result = ""
     let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
     let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
-    print(horizontalLine)
+    print(horizontalLine, to: &stream)
     result.append("\(horizontalLine)\n")
     for i in 0..<data.count {
         var row = "|"
@@ -284,8 +292,8 @@ public enum TableSpacing {
             let item = hasItem ? "\(data[i][j])\(space)|" : "\(space)|"
             row += item
         }
-        print(row)
-        print(horizontalLine)
+        print(row, to: &stream)
+        print(horizontalLine, to: &stream)
         result.append("\(row)\n")
         result.append("\(horizontalLine)\n")
     }
