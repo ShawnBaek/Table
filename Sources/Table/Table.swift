@@ -21,6 +21,29 @@ public enum TableSpacing {
     distribution: TableSpacing = .fillProportionally,
     terminator: String = ""
 ) -> String {
+    struct ConsoleStream: TextOutputStream {
+        func write(_ string: String) {
+            print(string)
+        }
+    }
+    
+    var consoleStream = ConsoleStream()
+    
+    return print(
+        table: data,
+        header: header,
+        distribution: distribution,
+        terminator: terminator,
+        stream: &consoleStream
+    )
+}
+@discardableResult public func print<Stream: TextOutputStream>(
+    table data: Any,
+    header: [String]? = nil,
+    distribution: TableSpacing = .fillProportionally,
+    terminator: String = "",
+    stream: inout Stream
+) -> String {
     var result = ""
     let mirrorObj = Mirror(reflecting: data)
     if mirrorObj.subjectType == [String].self {
@@ -35,7 +58,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     else if mirrorObj.subjectType == [Int].self {
@@ -50,7 +73,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     else if mirrorObj.subjectType == [Double].self {
@@ -65,7 +88,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     else if mirrorObj.subjectType == [AnyHashable: Any].self {
@@ -84,7 +107,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     else if mirrorObj.subjectType == [[String]].self {
@@ -99,7 +122,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     else if mirrorObj.subjectType == [[Int]].self {
@@ -114,7 +137,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     else if mirrorObj.subjectType == [[Double]].self {
@@ -129,7 +152,7 @@ public enum TableSpacing {
             result.append(print(header: header, info: info, distribution: distribution))
         }
         result.append(printTable(data: inputData, info: info, distribution: distribution))
-        print(terminator)
+        print(terminator, to: &stream)
         result.append(terminator)
     }
     return result
