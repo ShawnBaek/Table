@@ -25,7 +25,7 @@ public enum TableSpacing {
 ) -> String {
     struct ConsoleStream: TextOutputStream {
         func write(_ string: String) {
-            print(string)
+            print(string, terminator: "")
         }
     }
     
