@@ -6,7 +6,6 @@
 //  Copyright © 2020 BaekSungwook. All rights reserved.
 //
 
-import Foundation
 public enum TableSpacing {
     case fillProportionally
     case fillEqually
@@ -23,20 +22,20 @@ public enum TableSpacing {
     distribution: TableSpacing = .fillProportionally,
     terminator: String = ""
 ) -> String {
-    struct ConsoleStream: TextOutputStream {
+    struct DefaultStream: TextOutputStream {
         func write(_ string: String) {
             print(string, terminator: "")
         }
     }
     
-    var consoleStream = ConsoleStream()
+    var defaultStream = DefaultStream()
     
     return print(
         table: data,
         header: header,
         distribution: distribution,
         terminator: terminator,
-        stream: &consoleStream
+        stream: &defaultStream
     )
 }
 @discardableResult public func print<Stream: TextOutputStream>(
