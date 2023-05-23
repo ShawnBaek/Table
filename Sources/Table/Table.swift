@@ -115,7 +115,7 @@ public enum TableSpacing {
         let inputData = data as! [[String]]
         var info = tableInfo(data: inputData)
         if let header = header {
-            assert(inputData.map({ $0.count }).allSatisfy({ $0 == header.count }), "header should be equal items")
+            assert(inputData.map({ $0.count }).max() == header.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
@@ -130,7 +130,7 @@ public enum TableSpacing {
         let inputData = data as! [[Int]]
         var info = tableInfo(data: inputData)
         if let header = header {
-            assert(inputData.map({ $0.count }).allSatisfy({ $0 == header.count }), "header should be equal items")
+            assert(inputData.map({ $0.count }).max() == header.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
@@ -145,7 +145,7 @@ public enum TableSpacing {
         let inputData = data as! [[Double]]
         var info = tableInfo(data: inputData)
         if let header = header {
-            assert(inputData.map({ $0.count }).allSatisfy({ $0 == header.count }), "header should be equal items")
+            assert(inputData.map({ $0.count }).max() == header.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
                 info.widthInfo[index] = max(infoWidth, title.count)
