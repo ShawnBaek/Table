@@ -173,6 +173,10 @@ I'm going to add testCases for dictionary next time.
 ## Contributing to Table
 Contributions to the Table are welcomed and encouraged!
 
+## Next Step
+- Export CSV from Table
+- Unicode
+
 ## Contact Me
 If you have any questions about `Table`, please email me at shawn@shawnbaek.com
 
