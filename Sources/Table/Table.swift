@@ -6,16 +6,53 @@
 //  Copyright © 2020 BaekSungwook. All rights reserved.
 //
 
+// Extension to handle Unicode character width properly
+extension String {
+    /// Calculate the display width of the string
+    /// CJK characters and other full-width characters count as 2 spaces
+    var displayWidth: Int {
+        return self.reduce(0) { $0 + $1.displayWidth }
+    }
+}
+
+extension Character {
+    /// Calculate the display width of a character
+    /// CJK characters and other full-width characters count as 2 spaces
+    var displayWidth: Int {
+        // ASCII characters (most English letters, numbers, basic symbols)
+        if self.isASCII {
+            return 1
+        }
+        
+        // Check for CJK and other full-width characters
+        let unicodeScalars = self.unicodeScalars
+        let value = unicodeScalars[unicodeScalars.startIndex].value
+        
+        // CJK character ranges and full-width character ranges
+        if (0x1100...0x11FF).contains(value) ||    // Hangul Jamo
+           (0x2E80...0x9FFF).contains(value) ||    // CJK Unified Ideographs
+           (0xAC00...0xD7AF).contains(value) ||    // Hangul Syllables
+           (0xF900...0xFAFF).contains(value) ||    // CJK Compatibility Ideographs
+           (0xFF01...0xFF60).contains(value) {     // Full-width ASCII variants
+            return 2
+        }
+        
+        // Other Unicode characters default to width 1
+        return 1
+    }
+}
+
 public enum TableSpacing {
     case fillProportionally
     case fillEqually
 }
+
+/// Print data in table format
 /// - Parameters:
 ///   - table: Zero or more items to print.
 ///   - header: A string to print header on table.
 ///   - terminator: A string to print end of function.
 ///   - distribution: A spacing for item
-//public func print(table data: Any, header: [String]? = nil)
 @discardableResult public func print(
     table data: Any,
     header: [String]? = nil,
@@ -38,6 +75,7 @@ public enum TableSpacing {
         stream: &defaultStream
     )
 }
+
 @discardableResult public func print<Stream: TextOutputStream>(
     table data: Any,
     header: [String]? = nil,
@@ -54,7 +92,7 @@ public enum TableSpacing {
             assert(header.count == inputData.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
-                info.widthInfo[index] = max(infoWidth, title.count)
+                info.widthInfo[index] = max(infoWidth, title.displayWidth)
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
@@ -69,7 +107,7 @@ public enum TableSpacing {
             assert(header.count == inputData.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
-                info.widthInfo[index] = max(infoWidth, title.count)
+                info.widthInfo[index] = max(infoWidth, title.displayWidth)
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
@@ -84,7 +122,7 @@ public enum TableSpacing {
             assert(header.count == inputData.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
-                info.widthInfo[index] = max(infoWidth, title.count)
+                info.widthInfo[index] = max(infoWidth, title.displayWidth)
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
@@ -99,10 +137,10 @@ public enum TableSpacing {
             assert(header.count == 2, "header should be key, value for dictionary")
             for (index, title) in header.enumerated() {
                 if index == 0 {
-                    info.maxKeyWidth = max(info.maxKeyWidth, title.count)
+                    info.maxKeyWidth = max(info.maxKeyWidth, title.displayWidth)
                 }
                 else {
-                    info.maxValueWidth = max(info.maxValueWidth, title.count)
+                    info.maxValueWidth = max(info.maxValueWidth, title.displayWidth)
                 }
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
@@ -118,7 +156,7 @@ public enum TableSpacing {
             assert(inputData.map({ $0.count }).max() == header.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
-                info.widthInfo[index] = max(infoWidth, title.count)
+                info.widthInfo[index] = max(infoWidth, title.displayWidth)
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
@@ -133,7 +171,7 @@ public enum TableSpacing {
             assert(inputData.map({ $0.count }).max() == header.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
-                info.widthInfo[index] = max(infoWidth, title.count)
+                info.widthInfo[index] = max(infoWidth, title.displayWidth)
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
@@ -148,7 +186,7 @@ public enum TableSpacing {
             assert(inputData.map({ $0.count }).max() == header.count, "header should be equal items")
             for (index, title) in header.enumerated() {
                 let infoWidth = info.widthInfo[index]!
-                info.widthInfo[index] = max(infoWidth, title.count)
+                info.widthInfo[index] = max(infoWidth, title.displayWidth)
             }
             result.append(print(header: header, info: info, distribution: distribution, stream: &stream))
         }
@@ -173,7 +211,7 @@ public enum TableSpacing {
     var row = "|"
     for i in 0..<header.count {
         let width = distribution == .fillProportionally ? info.widthInfo[i]! : info.maxWidth
-        let space = String(repeating: " ", count: width - String(header[i]).count)
+        let space = String(repeating: " ", count: width - header[i].displayWidth)
         let item = "\(header[i])\(space)|"
         row += item
     }
@@ -201,7 +239,7 @@ public enum TableSpacing {
         else {
             itemCount = max(info.maxKeyWidth, info.maxValueWidth)
         }
-        let space = String(repeating: " ", count: itemCount - String(header[i]).count)
+        let space = String(repeating: " ", count: itemCount - header[i].displayWidth)
         let item = "\(header[i])\(space)|"
         row += item
     }
@@ -229,12 +267,12 @@ public enum TableSpacing {
         var row = "|"
         let keyValue = String(describing: key)
         let keyWidth = distribution == .fillProportionally ? info.maxKeyWidth : maxWidth
-        let keySpace = String(repeating: " ", count: keyWidth - keyValue.count)
+        let keySpace = String(repeating: " ", count: keyWidth - keyValue.displayWidth)
         let keyItem = "\(keyValue)\(keySpace)|"
         row += keyItem
         let value = String(describing: data[key] ?? "")
         let valueWidth = distribution == .fillProportionally ? info.maxValueWidth : maxWidth
-        let space = String(repeating: " ", count: valueWidth - value.count)
+        let space = String(repeating: " ", count: valueWidth - value.displayWidth)
         let item = "\(value)\(space)|"
         row += item
         print(row, to: &stream)
@@ -259,8 +297,9 @@ public enum TableSpacing {
     var row = "|"
     for i in 0..<info.numberOfItem {
         let width = distribution == .fillProportionally ? info.widthInfo[i]! : info.maxWidth
-        let space = String(repeating: " ", count: width - String(data[i]).count)
-        let item = "\(data[i])\(space)|"
+        let stringValue = String(data[i])
+        let space = String(repeating: " ", count: width - stringValue.displayWidth)
+        let item = "\(stringValue)\(space)|"
         row += item
     }
     print(row, to: &stream)
@@ -286,10 +325,18 @@ public enum TableSpacing {
         for j in 0..<info.numberOfItem {
             let hasItem = data[i].indices.contains(j)
             let width = distribution == .fillProportionally ? info.widthInfo[j]! : info.maxWidth
-            let spaceCount = hasItem ? (width - String(data[i][j]).count) : width
-            let space = String(repeating: " ", count: spaceCount)
-            let item = hasItem ? "\(data[i][j])\(space)|" : "\(space)|"
-            row += item
+            
+            if hasItem {
+                let stringValue = String(data[i][j])
+                let spaceCount = width - stringValue.displayWidth
+                let space = String(repeating: " ", count: spaceCount)
+                let item = "\(stringValue)\(space)|"
+                row += item
+            } else {
+                let space = String(repeating: " ", count: width)
+                let item = "\(space)|"
+                row += item
+            }
         }
         print(row, to: &stream)
         print(horizontalLine, to: &stream)
@@ -307,11 +354,11 @@ private func tableInfo(data: [AnyHashable: Any]) -> (
     ) {
     let valueData = data.compactMap { String(describing: $0.value) }
     let keyData = data.compactMap { String(describing: $0.key) }
-    let maxValueWidth = valueData.sorted { $0.count > $1.count }.first!.count
-    let maxKeyWidth = keyData.sorted { $0.count > $1.count }.first!.count
+    let maxValueWidth = valueData.sorted { $0.displayWidth > $1.displayWidth }.first!.displayWidth
+    let maxKeyWidth = keyData.sorted { $0.displayWidth > $1.displayWidth }.first!.displayWidth
     var maxValueWidthDict: [String: Int] = [:]
     for key in keyData {
-        maxValueWidthDict[key] = String(describing: data[key] ?? "").count
+        maxValueWidthDict[key] = String(describing: data[key] ?? "").displayWidth
     }
     return (numberOfItem: 2, maxKeyWidth: maxKeyWidth, maxValueWidth: maxValueWidth, widthInfo: maxValueWidthDict)
 }
@@ -322,10 +369,10 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [Item]) -> (
     widthInfo: [Int: Int]
     ) {
     let stringData = data.map { String($0) }
-    let maxWidth = stringData.sorted { $0.count > $1.count }.first!.count
+    let maxWidth = stringData.sorted { $0.displayWidth > $1.displayWidth }.first!.displayWidth
     var maxWidthDict: [Int: Int] = [:]
     for (index, item) in stringData.enumerated() {
-        maxWidthDict[index] = item.count
+        maxWidthDict[index] = item.displayWidth
     }
     return (numberOfItem: stringData.count, maxWidth: maxWidth, widthInfo: maxWidthDict)
 }
@@ -336,14 +383,14 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
     widthInfo: [Int: Int]
     ) {
     let flattened = Array(data.joined())
-    let maxWidth = String(flattened.sorted { String($0).count > String($1).count }.first!).count
+    let maxWidth = String(flattened.sorted { String($0).displayWidth > String($1).displayWidth }.first!).displayWidth
     let itemCount = data.sorted{ $0.count > $1.count }.first!.count
     var maxWidthDict: [Int: Int] = [:]
 
     for i in 0..<itemCount {
         if let items = data.column(index: i) {
             let stringData = items.map {String(describing: $0)}
-            let maxCount = stringData.sorted{ $0.count > $1.count }.first!.count
+            let maxCount = stringData.sorted{ $0.displayWidth > $1.displayWidth }.first!.displayWidth
             maxWidthDict[i] = maxCount
         }
     }
@@ -398,8 +445,8 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
     return line
 }
 
-//StackOverflow: Martin R's Answer
-//https://stackoverflow.com/questions/35244584/get-column-from-2d-array-how-to-restrict-array-type-in-extension
+// From StackOverflow: Martin R's Answer
+// https://stackoverflow.com/questions/35244584/get-column-from-2d-array-how-to-restrict-array-type-in-extension
 private extension Array where Element : Collection {
     func column(index : Element.Index) -> [ Element.Iterator.Element ]? {
         let firstIndex = self.firstIndex(where: {$0.indices.contains(index)})

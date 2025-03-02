@@ -196,5 +196,31 @@ final class TableTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
     
-    //TODO:- Add Test for Dictionary
+    func test_multiLanguage_table_with_fillProportionally() {
+        let output = print(
+            table: [
+                ["English", "Korean", "Japanese", "Chinese", "Arabic"],
+                ["Hello", "안녕하세요", "こんにちは", "你好", "مرحبا"],
+                ["World", "세계", "世界", "世界", "عالم"],
+                ["Programming", "프로그래밍", "プログラミング", "编程", "برمجة"]
+            ],
+            header: ["EN", "KO", "JP", "CN", "AR"],
+            distribution: .fillProportionally
+        )
+        let expected = """
+            +-----------+----------+--------------+-------+------+
+            |EN         |KO        |JP            |CN     |AR    |
+            +-----------+----------+--------------+-------+------+
+            |English    |Korean    |Japanese      |Chinese|Arabic|
+            +-----------+----------+--------------+-------+------+
+            |Hello      |안녕하세요|こんにちは    |你好   |مرحبا |
+            +-----------+----------+--------------+-------+------+
+            |World      |세계      |世界          |世界   |عالم  |
+            +-----------+----------+--------------+-------+------+
+            |Programming|프로그래밍|プログラミング|编程   |برمجة |
+            +-----------+----------+--------------+-------+------+
+            
+            """
+        XCTAssertEqual(output, expected)
+    }
 }
