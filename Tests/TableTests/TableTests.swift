@@ -341,3 +341,81 @@ struct HeaderTests {
         #expect(output.contains("列2"))
     }
 }
+
+// MARK: - Table Style Tests
+
+struct TableStyleTests {
+
+    @Test func unicodeStyleTable() {
+        let output = print(
+            table: [["1", "HELLO"], ["2", "WORLD"]],
+            header: ["ID", "Word"],
+            style: .unicode
+        )
+        // Unicode box-drawing characters
+        #expect(output.contains("┌"))  // Top left corner
+        #expect(output.contains("┐"))  // Top right corner
+        #expect(output.contains("└"))  // Bottom left corner
+        #expect(output.contains("┘"))  // Bottom right corner
+        #expect(output.contains("─"))  // Horizontal line
+        #expect(output.contains("│"))  // Vertical line
+        #expect(output.contains("├"))  // Left T junction
+        #expect(output.contains("┤"))  // Right T junction
+        #expect(output.contains("┬"))  // Top T junction
+        #expect(output.contains("┴"))  // Bottom T junction
+    }
+
+    @Test func asciiStyleTable() {
+        let output = print(
+            table: [["1", "HELLO"], ["2", "WORLD"]],
+            header: ["ID", "Word"],
+            style: .ascii
+        )
+        // ASCII characters
+        #expect(output.contains("+"))  // Corners and junctions
+        #expect(output.contains("-"))  // Horizontal line
+        #expect(output.contains("|"))  // Vertical line
+        // Should NOT contain Unicode box-drawing
+        #expect(!output.contains("┌"))
+        #expect(!output.contains("─"))
+        #expect(!output.contains("│"))
+    }
+
+    @Test func unicodeStyleTableOutput() {
+        let output = print(
+            table: [["A", "B"], ["C", "D"]],
+            header: ["X", "Y"],
+            style: .unicode
+        )
+        let expected = """
+            ┌─┬─┐
+            │X│Y│
+            ├─┼─┤
+            │A│B│
+            ├─┼─┤
+            │C│D│
+            └─┴─┘
+
+            """
+        #expect(output == expected)
+    }
+
+    @Test func asciiStyleTableOutput() {
+        let output = print(
+            table: [["A", "B"], ["C", "D"]],
+            header: ["X", "Y"],
+            style: .ascii
+        )
+        let expected = """
+            +-+-+
+            |X|Y|
+            +-+-+
+            |A|B|
+            +-+-+
+            |C|D|
+            +-+-+
+
+            """
+        #expect(output == expected)
+    }
+}

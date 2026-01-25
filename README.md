@@ -159,36 +159,68 @@ You can use it on your iPad Playground 😎
 
 
 
+## Table Style
+
+Choose between ASCII (default) or Unicode box-drawing characters:
+
+### ASCII Style (Default)
+```swift
+print(table: [["1", "Hello"], ["2", "World"]], header: ["ID", "Word"])
+```
+```
++--+-----+
+|ID|Word |
++--+-----+
+|1 |Hello|
++--+-----+
+|2 |World|
++--+-----+
+```
+
+### Unicode Style (MySQL-like)
+```swift
+print(table: [["1", "Hello"], ["2", "World"]], header: ["ID", "Word"], style: .unicode)
+```
+```
+┌──┬─────┐
+│ID│Word │
+├──┼─────┤
+│1 │Hello│
+├──┼─────┤
+│2 │World│
+└──┴─────┘
+```
+
 ## Multi-Language Support
 
 Table correctly handles CJK characters, Korean Hangul, Japanese Kana, Arabic, and emoji with proper column alignment:
 
 ```swift
-// Mixed language table
+// Mixed language table with Unicode style
 print(table: [
     ["Hello", "你好"],
     ["World", "世界"]
-], header: ["EN", "CN"])
+], header: ["EN", "CN"], style: .unicode)
 ```
-```swift
-+-----+----+
-|EN   |CN  |
-+-----+----+
-|Hello|你好|
-+-----+----+
-|World|世界|
-+-----+----+
+```
+┌─────┬────┐
+│EN   │CN  │
+├─────┼────┤
+│Hello│你好│
+├─────┼────┤
+│World│世界│
+└─────┴────┘
 ```
 
 ### Emoji Support
 
 ```swift
-print(table: ["👋", "🎉", "🚀"])
+print(table: ["👋", "🎉", "🚀"], style: .unicode)
 ```
-```swift
-+--+--+--+
-|👋|🎉|🚀|
-+--+--+--+
+```
+┌──┬──┬──┐
+│👋│🎉│🚀│
+└──┴──┴──┘
 ```
 
 ## Control Character Handling
