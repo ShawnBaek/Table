@@ -10,7 +10,7 @@ I'm sure if you practice coding interviews, it helps you a lot. You don't need t
 
 ## Requirements
 
-- **Swift 6.2+** (Xcode 16+ or Swift 6.2 toolchain on Linux)
+- **Swift 6.1+** (Xcode 16+ or Swift 6.1 toolchain on Linux)
 - macOS 11+ / iOS 14+ / tvOS 14+ / watchOS 7+
 
 ## Usage
