@@ -234,7 +234,7 @@ print(table: ["Line1\nLine2", "Tab\there"])
 
 ## Logger Integration
 
-Table output works seamlessly with Apple's [os.Logger](https://developer.apple.com/documentation/os/logger):
+Table extends Apple's [os.Logger](https://developer.apple.com/documentation/os/logger) with a `table()` method for easy logging:
 
 ```swift
 import os
@@ -242,13 +242,41 @@ import Table
 
 let logger = Logger(subsystem: "com.myapp", category: "DataDisplay")
 
-let tableOutput = print(
-    table: [["Alice", "30"], ["Bob", "25"]],
-    header: ["Name", "Age"],
-    style: .unicode
-)
+// 1D Array of String with Header
+logger.table(["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"])
 
-logger.info("User data:\n\(tableOutput)")
+// 1D Array of Int
+logger.table([2, 94231, 241245125125])
+
+// 1D Array of Double
+logger.table([2.0, 931, 214.24124])
+
+// 2D Array of String
+logger.table([["1", "HELLOW"], ["2", "WOLLEH"]], header: ["Index", "Words"])
+
+// 2D Array with unequal columns
+logger.table([["1", "b2"], ["Hellow", "Great!"], ["sdjfklsjdfklsadf", "dsf", "1"]])
+
+// 2D Array of Int
+logger.table([[1, 2, 3], [4, 5, 6], [7, 8, 9, 10]])
+
+// Dictionary
+logger.table(["name": "Alice", "age": 30] as [AnyHashable: Any], header: ["key", "value"])
+```
+
+### Logger Options
+
+```swift
+// Choose table style (default: .unicode)
+logger.table(data, style: .ascii)    // +--+--+
+logger.table(data, style: .unicode)  // ┌──┬──┐
+
+// Choose log level (default: .info)
+logger.table(data, level: .debug)
+logger.table(data, level: .error)
+
+// Choose distribution
+logger.table(data, distribution: .fillEqually)
 ```
 
 Output in Console.app:

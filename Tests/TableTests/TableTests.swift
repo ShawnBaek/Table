@@ -637,3 +637,96 @@ struct LoggerIntegrationTests {
         #expect(capturedOutput.contains("C"))
     }
 }
+
+// MARK: - Logger.table() Extension Tests
+
+struct LoggerTableExtensionTests {
+
+    @Test func loggerTableWith1DStringArray() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        // This should compile and run without errors
+        logger.table(["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"])
+    }
+
+    @Test func loggerTableWith1DIntArray() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table([2, 94231, 241245125125])
+    }
+
+    @Test func loggerTableWith1DDoubleArray() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table([2.0, 931, 214.24124])
+    }
+
+    @Test func loggerTableWith2DStringArray() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table([["1", "HELLOW"], ["2", "WOLLEH"]], header: ["Index", "Words"])
+    }
+
+    @Test func loggerTableWith2DStringArrayUnequalColumns() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table([["1", "b2"], ["Hellow", "Great!"], ["sdjfklsjdfklsadf", "dsf", "1"]])
+    }
+
+    @Test func loggerTableWith2DIntArrayUnequalColumns() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table([[1, 2, 3], [4, 5, 6], [7, 8, 9, 10]])
+    }
+
+    @Test func loggerTableWithDictionary() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table(["1": 1, "key2": "Hellow?", "key3": 0, "I'm Table": [1, 2, 3, 2, 1]] as [AnyHashable: Any], header: ["key", "value"])
+    }
+
+    @Test func loggerTableWithDifferentStyles() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        // ASCII style
+        logger.table(["A", "B", "C"], style: .ascii)
+
+        // Unicode style (default)
+        logger.table(["A", "B", "C"], style: .unicode)
+    }
+
+    @Test func loggerTableWithDifferentLogLevels() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        // Different log levels
+        logger.table(["Debug"], level: .debug)
+        logger.table(["Info"], level: .info)
+        logger.table(["Error"], level: .error)
+        logger.table(["Fault"], level: .fault)
+    }
+
+    @Test func loggerTableWithUnicodeContent() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table([
+            ["Hello", "你好", "こんにちは"],
+            ["World", "世界", "世界"]
+        ], header: ["EN", "CN", "JP"])
+    }
+
+    @Test func loggerTableWithEmoji() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table(["👋", "🎉", "🚀", "👨‍👩‍👧‍👦"])
+    }
+
+    @Test func loggerTableWithFillEqually() {
+        let logger = Logger(subsystem: "com.table.tests", category: "LoggerExtension")
+
+        logger.table(
+            ["Short", "A much longer value"],
+            distribution: .fillEqually,
+            style: .unicode
+        )
+    }
+}

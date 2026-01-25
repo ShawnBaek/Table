@@ -6,6 +6,8 @@
 //  Copyright © 2020 BaekSungwook. All rights reserved.
 //
 
+import os
+
 // MARK: - Control Character Escaping
 
 /// Escape control characters to prevent table layout corruption
@@ -716,5 +718,154 @@ private extension Array where Element : Collection {
         else {
             return nil
         }
+    }
+}
+
+// MARK: - Logger Extension
+
+/// Extension to add table logging capabilities to os.Logger
+@available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *)
+public extension Logger {
+
+    /// Log a table with data
+    /// - Parameters:
+    ///   - table: The data to display in table format
+    ///   - header: Optional header row
+    ///   - distribution: Column spacing distribution
+    ///   - style: Table border style
+    ///   - level: Log level (default: .info)
+    func table(
+        _ data: Any,
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log 1D array of strings as a table
+    func table(
+        _ data: [String],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log 1D array of integers as a table
+    func table(
+        _ data: [Int],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log 1D array of doubles as a table
+    func table(
+        _ data: [Double],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log 2D array of strings as a table
+    func table(
+        _ data: [[String]],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log 2D array of integers as a table
+    func table(
+        _ data: [[Int]],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log 2D array of doubles as a table
+    func table(
+        _ data: [[Double]],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
+    }
+
+    /// Log dictionary as a table
+    func table(
+        _ data: [AnyHashable: Any],
+        header: [String]? = nil,
+        distribution: TableSpacing = .fillProportionally,
+        style: TableStyle = .unicode,
+        level: OSLogType = .info
+    ) {
+        let output = print(
+            table: data,
+            header: header,
+            distribution: distribution,
+            style: style
+        )
+        self.log(level: level, "\n\(output)")
     }
 }
