@@ -1,4 +1,5 @@
 import Testing
+import os
 @testable import Table
 
 // MARK: - Basic Table Tests (Migrated from XCTest)
@@ -417,5 +418,222 @@ struct TableStyleTests {
 
             """
         #expect(output == expected)
+    }
+}
+
+// MARK: - Edge Cases with Varying Widths and Empty Cells
+
+struct VariableWidthTests {
+
+    @Test func tableWithVeryLongAndShortColumns() {
+        let output = print(
+            table: [
+                ["A", "This is a very long text that spans many characters", "B"],
+                ["X", "Short", "Y"]
+            ],
+            header: ["Col1", "Col2", "Col3"],
+            style: .ascii
+        )
+        #expect(output.contains("This is a very long text that spans many characters"))
+        #expect(output.contains("Short"))
+        // Verify alignment - short values should be padded
+        #expect(output.contains("|A   |"))
+        #expect(output.contains("|X   |"))
+    }
+
+    @Test func tableWithEmptyCells() {
+        let output = print(
+            table: [
+                ["", "Value1", ""],
+                ["Value2", "", "Value3"],
+                ["", "", ""]
+            ],
+            header: ["A", "B", "C"],
+            style: .unicode
+        )
+        #expect(output.contains("│"))
+        #expect(output.contains("Value1"))
+        #expect(output.contains("Value2"))
+        #expect(output.contains("Value3"))
+    }
+
+    @Test func tableWithMixedEmptyAndLongCells() {
+        let output = print(
+            table: [
+                ["", "A very long value here", ""],
+                ["Short", "", "Another long value"],
+                ["", "", ""]
+            ],
+            style: .unicode
+        )
+        #expect(!output.isEmpty)
+        #expect(output.contains("A very long value here"))
+        #expect(output.contains("Another long value"))
+        #expect(output.contains("Short"))
+    }
+
+    @Test func tableWithUnevenRowLengths() {
+        // Some rows have fewer columns than others
+        let output = print(
+            table: [
+                ["A", "B", "C", "D", "E"],
+                ["1", "2"],
+                ["X", "Y", "Z"]
+            ],
+            style: .ascii
+        )
+        #expect(output.contains("|A|"))
+        #expect(output.contains("|1|"))
+        #expect(output.contains("|X|"))
+        // Empty cells should be represented with spaces
+        #expect(output.contains("| |"))
+    }
+
+    @Test func unicodeTableWithEmptyCellsOutput() {
+        let output = print(
+            table: [["A", "", "C"], ["", "B", ""]],
+            style: .unicode
+        )
+        let expected = """
+            ┌─┬─┬─┐
+            │A│ │C│
+            ├─┼─┼─┤
+            │ │B│ │
+            └─┴─┴─┘
+
+            """
+        #expect(output == expected)
+    }
+
+    @Test func tableWithSingleEmptyCell() {
+        let output = print(
+            table: [[""]],
+            style: .unicode
+        )
+        #expect(output.contains("┌┐"))
+        #expect(output.contains("││"))
+        #expect(output.contains("└┘"))
+    }
+
+    @Test func tableWithMixedUnicodeAndEmptyCells() {
+        let output = print(
+            table: [
+                ["你好", "", "Hello"],
+                ["", "世界", ""],
+                ["🎉", "", "🚀"]
+            ],
+            style: .unicode
+        )
+        #expect(output.contains("你好"))
+        #expect(output.contains("世界"))
+        #expect(output.contains("Hello"))
+        #expect(output.contains("🎉"))
+        #expect(output.contains("🚀"))
+    }
+
+    @Test func dictionaryTableVerifyOutput() {
+        let output = print(
+            table: ["key1": "short", "longerKey": "a much longer value here"] as [AnyHashable: Any],
+            header: ["Key", "Value"],
+            style: .unicode
+        )
+        #expect(output.contains("key1"))
+        #expect(output.contains("longerKey"))
+        #expect(output.contains("short"))
+        #expect(output.contains("a much longer value here"))
+    }
+
+    @Test func singleRowTableOutput() {
+        let output = print(
+            table: ["Only", "One", "Row"],
+            style: .unicode
+        )
+        let expected = """
+            ┌────┬───┬───┐
+            │Only│One│Row│
+            └────┴───┴───┘
+
+            """
+        #expect(output == expected)
+    }
+
+    @Test func singleColumnTableOutput() {
+        let output = print(
+            table: [["A"], ["B"], ["C"]],
+            style: .unicode
+        )
+        let expected = """
+            ┌─┐
+            │A│
+            ├─┤
+            │B│
+            ├─┤
+            │C│
+            └─┘
+
+            """
+        #expect(output == expected)
+    }
+}
+
+// MARK: - Logger Integration Tests
+
+struct LoggerIntegrationTests {
+
+    @Test func tableOutputCanBeLoggedWithOSLogger() {
+        // Create a Logger instance
+        let logger = Logger(subsystem: "com.table.tests", category: "TableTests")
+
+        // Generate table output
+        let tableOutput = print(
+            table: [["Alice", "30"], ["Bob", "25"]],
+            header: ["Name", "Age"],
+            style: .unicode
+        )
+
+        // Verify the output is a valid non-empty string that can be logged
+        #expect(!tableOutput.isEmpty)
+        #expect(tableOutput.contains("Alice"))
+        #expect(tableOutput.contains("Bob"))
+
+        // Log the table output (this verifies Logger accepts the string)
+        logger.info("Table output:\n\(tableOutput)")
+
+        // Also test with different log levels
+        logger.debug("Debug table:\n\(tableOutput)")
+        logger.notice("Notice table:\n\(tableOutput)")
+    }
+
+    @Test func tableOutputWithUnicodeCanBeLogged() {
+        let logger = Logger(subsystem: "com.table.tests", category: "UnicodeTests")
+
+        // Generate table with Unicode content
+        let tableOutput = print(
+            table: [["Hello", "你好"], ["World", "世界"]],
+            header: ["EN", "CN"],
+            style: .unicode
+        )
+
+        #expect(!tableOutput.isEmpty)
+        #expect(tableOutput.contains("你好"))
+        #expect(tableOutput.contains("世界"))
+
+        // Log Unicode content
+        logger.info("Unicode table:\n\(tableOutput)")
+    }
+
+    @Test func tableOutputToCustomTextOutputStream() {
+        // Test that Table works with custom TextOutputStream (similar to how Logger might capture output)
+        var capturedOutput = ""
+        _ = print(
+            table: ["A", "B", "C"],
+            style: .ascii,
+            stream: &capturedOutput
+        )
+
+        #expect(!capturedOutput.isEmpty)
+        #expect(capturedOutput.contains("A"))
+        #expect(capturedOutput.contains("B"))
+        #expect(capturedOutput.contains("C"))
     }
 }

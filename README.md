@@ -10,8 +10,8 @@ I'm sure if you practice coding interviews, it helps you a lot. You don't need t
 
 ## Requirements
 
-- **Swift 6.0+** (Xcode 16+ or Swift 6.0 toolchain on Linux)
-- macOS 10.15+ / iOS 13+ / tvOS 13+ / watchOS 6+
+- **Swift 6.2+** (Xcode 16+ or Swift 6.2 toolchain on Linux)
+- macOS 11+ / iOS 14+ / tvOS 14+ / watchOS 7+
 
 ## Usage
 
@@ -230,6 +230,36 @@ Control characters are automatically escaped to prevent layout corruption:
 ```swift
 print(table: ["Line1\nLine2", "Tab\there"])
 // Displays as: |Line1\nLine2|Tab\there|
+```
+
+## Logger Integration
+
+Table output works seamlessly with Apple's [os.Logger](https://developer.apple.com/documentation/os/logger):
+
+```swift
+import os
+import Table
+
+let logger = Logger(subsystem: "com.myapp", category: "DataDisplay")
+
+let tableOutput = print(
+    table: [["Alice", "30"], ["Bob", "25"]],
+    header: ["Name", "Age"],
+    style: .unicode
+)
+
+logger.info("User data:\n\(tableOutput)")
+```
+
+Output in Console.app:
+```
+┌─────┬───┐
+│Name │Age│
+├─────┼───┤
+│Alice│30 │
+├─────┼───┤
+│Bob  │25 │
+└─────┴───┘
 ```
 
 ## What's the next step?!
