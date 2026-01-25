@@ -1,12 +1,17 @@
 # Welcome to Table
-The table is a helper function to print the table. 
+The table is a helper function to print the table.
 
-You can print the table bypassing the Any data! 
+You can print the table bypassing the Any data!
 [e.g., `1d array`,` 2d array`, and `dictionary`]
 
-It inspired by `javascript` `console.table`. 
+It inspired by `javascript` `console.table`.
 
 I'm sure if you practice coding interviews, it helps you a lot. You don't need to struggle for checking results using a build-in print function!
+
+## Requirements
+
+- **Swift 6.0+** (Xcode 16+ or Swift 6.0 toolchain on Linux)
+- macOS 10.15+ / iOS 13+ / tvOS 13+ / watchOS 6+
 
 ## Usage
 
@@ -154,13 +159,52 @@ You can use it on your iPad Playground 😎
 
 
 
+## Multi-Language Support
+
+Table correctly handles CJK characters, Korean Hangul, Japanese Kana, Arabic, and emoji with proper column alignment:
+
+```swift
+// Mixed language table
+print(table: [
+    ["Hello", "你好"],
+    ["World", "世界"]
+], header: ["EN", "CN"])
+```
+```swift
++-----+----+
+|EN   |CN  |
++-----+----+
+|Hello|你好|
++-----+----+
+|World|世界|
++-----+----+
+```
+
+### Emoji Support
+
+```swift
+print(table: ["👋", "🎉", "🚀"])
+```
+```swift
++--+--+--+
+|👋|🎉|🚀|
++--+--+--+
+```
+
+## Control Character Handling
+
+Control characters are automatically escaped to prevent layout corruption:
+
+```swift
+print(table: ["Line1\nLine2", "Tab\there"])
+// Displays as: |Line1\nLine2|Tab\there|
+```
+
 ## What's the next step?!
 I'm going to support more types!
 - tuple
 - decodable / encodable
 - custom data type
-- emoticon / unicode
-
 
 Table Style
 - ascii table
@@ -168,14 +212,10 @@ Table Style
 - and more
 
 ## Unit Tests
-I'm going to add testCases for dictionary next time.
+The library uses Swift Testing framework with 25+ test cases covering Unicode handling, performance, and edge cases.
 
 ## Contributing to Table
 Contributions to the Table are welcomed and encouraged!
-
-## Next Step
-- Export CSV from Table
-- Unicode
 
 ## Contact Me
 If you have any questions about `Table`, please email me at shawn@shawnbaek.com

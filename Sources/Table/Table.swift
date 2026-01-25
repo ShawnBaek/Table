@@ -6,7 +6,30 @@
 //  Copyright © 2020 BaekSungwook. All rights reserved.
 //
 
-// Extension to handle Unicode character width properly
+// MARK: - Control Character Escaping
+
+/// Escape control characters to prevent table layout corruption
+private func escapeControlCharacters(_ string: String) -> String {
+    var result = ""
+    for char in string {
+        switch char {
+        case "\n":
+            result += "\\n"
+        case "\t":
+            result += "\\t"
+        case "\r":
+            result += "\\r"
+        case "\0":
+            result += "\\0"
+        default:
+            result.append(char)
+        }
+    }
+    return result
+}
+
+// MARK: - Unicode Width Extensions
+
 extension String {
     /// Calculate the display width of the string
     /// CJK characters and other full-width characters count as 2 spaces
@@ -16,33 +39,97 @@ extension String {
 }
 
 extension Character {
-    /// Calculate the display width of a character
-    /// CJK characters and other full-width characters count as 2 spaces
+    /// Calculate the display width of a character following UAX #11
+    /// CJK characters, emoji, and other full-width characters count as 2 spaces
     var displayWidth: Int {
         // ASCII characters (most English letters, numbers, basic symbols)
         if self.isASCII {
             return 1
         }
-        
-        // Check for CJK and other full-width characters
+
         let unicodeScalars = self.unicodeScalars
-        let value = unicodeScalars[unicodeScalars.startIndex].value
-        
-        // CJK character ranges and full-width character ranges
-        if (0x1100...0x11FF).contains(value) ||    // Hangul Jamo
-           (0x2E80...0x9FFF).contains(value) ||    // CJK Unified Ideographs
-           (0xAC00...0xD7AF).contains(value) ||    // Hangul Syllables
+        guard let firstScalar = unicodeScalars.first else {
+            return 1
+        }
+
+        // Check for emoji first (emoji should be width 2)
+        // Emoji with presentation selector (U+FE0F) or emoji presentation property
+        if firstScalar.properties.isEmoji {
+            // Check for emoji presentation or variation selector
+            if firstScalar.properties.isEmojiPresentation ||
+               unicodeScalars.contains(where: { $0.value == 0xFE0F }) {
+                return 2
+            }
+            // Common emoji ranges that should be width 2
+            let value = firstScalar.value
+            if (0x1F300...0x1F9FF).contains(value) ||  // Misc Symbols, Emoticons, etc.
+               (0x1FA00...0x1FAFF).contains(value) ||  // Extended-A
+               (0x2600...0x26FF).contains(value) ||    // Misc Symbols
+               (0x2700...0x27BF).contains(value) {     // Dingbats
+                return 2
+            }
+        }
+
+        let value = firstScalar.value
+
+        // Wide (W) and Fullwidth (F) characters per UAX #11
+        // These all have display width 2
+        if (0x1100...0x115F).contains(value) ||    // Hangul Jamo (initial consonants)
+           (0x231A...0x231B).contains(value) ||    // Watch, Hourglass
+           (0x2329...0x232A).contains(value) ||    // Angle brackets
+           (0x23E9...0x23F3).contains(value) ||    // Various symbols
+           (0x23F8...0x23FA).contains(value) ||    // Various symbols
+           (0x25FD...0x25FE).contains(value) ||    // Medium squares
+           (0x2614...0x2615).contains(value) ||    // Umbrella, Hot beverage
+           (0x2648...0x2653).contains(value) ||    // Zodiac symbols
+           (0x26AA...0x26AB).contains(value) ||    // Circles
+           (0x26BD...0x26BE).contains(value) ||    // Soccer, Baseball
+           (0x26C4...0x26C5).contains(value) ||    // Snowman, Sun
+           (0x26F2...0x26F3).contains(value) ||    // Fountain, Golf
+           (0x2708...0x270D).contains(value) ||    // Various symbols
+           (0x2733...0x2734).contains(value) ||    // Eight spoked asterisk
+           (0x2753...0x2755).contains(value) ||    // Question marks
+           (0x2763...0x2764).contains(value) ||    // Hearts
+           (0x2795...0x2797).contains(value) ||    // Math symbols
+           (0x2934...0x2935).contains(value) ||    // Arrows
+           (0x2B05...0x2B07).contains(value) ||    // Arrows
+           (0x2B1B...0x2B1C).contains(value) ||    // Squares
+           (0x2E80...0x2EFF).contains(value) ||    // CJK Radicals Supplement
+           (0x2F00...0x2FDF).contains(value) ||    // Kangxi Radicals
+           (0x2FF0...0x2FFF).contains(value) ||    // Ideographic Description
+           (0x3000...0x303E).contains(value) ||    // CJK Symbols and Punctuation
+           (0x3041...0x3096).contains(value) ||    // Hiragana
+           (0x3099...0x30FF).contains(value) ||    // Hiragana/Katakana
+           (0x3105...0x312F).contains(value) ||    // Bopomofo
+           (0x3131...0x318E).contains(value) ||    // Hangul Compatibility Jamo
+           (0x3190...0x31FF).contains(value) ||    // Kanbun, Bopomofo Extended, etc.
+           (0x3200...0x321E).contains(value) ||    // Enclosed CJK Letters
+           (0x3220...0x3247).contains(value) ||    // Enclosed CJK Letters continued
+           (0x3250...0x4DBF).contains(value) ||    // CJK Extension A and more
+           (0x4E00...0x9FFF).contains(value) ||    // CJK Unified Ideographs
+           (0xA960...0xA97F).contains(value) ||    // Hangul Jamo Extended-A
+           (0xAC00...0xD7A3).contains(value) ||    // Hangul Syllables
+           (0xD7B0...0xD7FF).contains(value) ||    // Hangul Jamo Extended-B
            (0xF900...0xFAFF).contains(value) ||    // CJK Compatibility Ideographs
-           (0xFF01...0xFF60).contains(value) {     // Full-width ASCII variants
+           (0xFE10...0xFE1F).contains(value) ||    // Vertical Forms
+           (0xFE30...0xFE6F).contains(value) ||    // CJK Compatibility Forms
+           (0xFF01...0xFF60).contains(value) ||    // Fullwidth ASCII variants
+           (0xFFE0...0xFFE6).contains(value) {     // Fullwidth symbols
             return 2
         }
-        
-        // Other Unicode characters default to width 1
+
+        // Supplementary planes (CJK Extension B and beyond)
+        if (0x20000...0x2FFFF).contains(value) ||  // Supplementary Ideographic Plane
+           (0x30000...0x3FFFF).contains(value) {   // Tertiary Ideographic Plane
+            return 2
+        }
+
+        // All other characters (Arabic, Cyrillic, Latin Extended, etc.) default to width 1
         return 1
     }
 }
 
-public enum TableSpacing {
+public enum TableSpacing: Sendable {
     case fillProportionally
     case fillEqually
 }
@@ -254,6 +341,7 @@ public enum TableSpacing {
     distribution: TableSpacing,
     stream: inout Stream
 ) -> String {
+    guard !data.isEmpty else { return "" }
     var result = ""
     let horizontalLine = horizontal(
         numberOfItems: info.numberOfItem,
@@ -265,14 +353,14 @@ public enum TableSpacing {
     let maxWidth = max(info.maxKeyWidth, info.maxValueWidth)
     for key in data.keys {
         var row = "|"
-        let keyValue = String(describing: key)
+        let keyValue = escapeControlCharacters(String(describing: key))
         let keyWidth = distribution == .fillProportionally ? info.maxKeyWidth : maxWidth
-        let keySpace = String(repeating: " ", count: keyWidth - keyValue.displayWidth)
+        let keySpace = String(repeating: " ", count: max(0, keyWidth - keyValue.displayWidth))
         let keyItem = "\(keyValue)\(keySpace)|"
         row += keyItem
-        let value = String(describing: data[key] ?? "")
+        let value = escapeControlCharacters(String(describing: data[key] ?? ""))
         let valueWidth = distribution == .fillProportionally ? info.maxValueWidth : maxWidth
-        let space = String(repeating: " ", count: valueWidth - value.displayWidth)
+        let space = String(repeating: " ", count: max(0, valueWidth - value.displayWidth))
         let item = "\(value)\(space)|"
         row += item
         print(row, to: &stream)
@@ -289,6 +377,7 @@ public enum TableSpacing {
     distribution: TableSpacing,
     stream: inout Stream
 ) -> String {
+    guard info.numberOfItem > 0 else { return "" }
     var result = ""
     let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
     let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
@@ -296,9 +385,9 @@ public enum TableSpacing {
     result.append("\(horizontalLine)\n")
     var row = "|"
     for i in 0..<info.numberOfItem {
-        let width = distribution == .fillProportionally ? info.widthInfo[i]! : info.maxWidth
-        let stringValue = String(data[i])
-        let space = String(repeating: " ", count: width - stringValue.displayWidth)
+        let width = distribution == .fillProportionally ? (info.widthInfo[i] ?? 0) : info.maxWidth
+        let stringValue = escapeControlCharacters(String(data[i]))
+        let space = String(repeating: " ", count: max(0, width - stringValue.displayWidth))
         let item = "\(stringValue)\(space)|"
         row += item
     }
@@ -315,6 +404,7 @@ public enum TableSpacing {
     distribution: TableSpacing,
     stream: inout Stream
 ) -> String {
+    guard info.numberOfItem > 0, !data.isEmpty else { return "" }
     var result = ""
     let fullWidth = distribution == .fillProportionally ? info.widthInfo.reduce(0, { $0 + $1.value }) : info.maxWidth * info.numberOfItem
     let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution)
@@ -324,11 +414,11 @@ public enum TableSpacing {
         var row = "|"
         for j in 0..<info.numberOfItem {
             let hasItem = data[i].indices.contains(j)
-            let width = distribution == .fillProportionally ? info.widthInfo[j]! : info.maxWidth
-            
+            let width = distribution == .fillProportionally ? (info.widthInfo[j] ?? 0) : info.maxWidth
+
             if hasItem {
-                let stringValue = String(data[i][j])
-                let spaceCount = width - stringValue.displayWidth
+                let stringValue = escapeControlCharacters(String(data[i][j]))
+                let spaceCount = max(0, width - stringValue.displayWidth)
                 let space = String(repeating: " ", count: spaceCount)
                 let item = "\(stringValue)\(space)|"
                 row += item
@@ -352,10 +442,13 @@ private func tableInfo(data: [AnyHashable: Any]) -> (
     maxValueWidth: Int,
     widthInfo: [String: Int]
     ) {
+    guard !data.isEmpty else {
+        return (numberOfItem: 2, maxKeyWidth: 0, maxValueWidth: 0, widthInfo: [:])
+    }
     let valueData = data.compactMap { String(describing: $0.value) }
     let keyData = data.compactMap { String(describing: $0.key) }
-    let maxValueWidth = valueData.sorted { $0.displayWidth > $1.displayWidth }.first!.displayWidth
-    let maxKeyWidth = keyData.sorted { $0.displayWidth > $1.displayWidth }.first!.displayWidth
+    let maxValueWidth = valueData.map { $0.displayWidth }.max() ?? 0
+    let maxKeyWidth = keyData.map { $0.displayWidth }.max() ?? 0
     var maxValueWidthDict: [String: Int] = [:]
     for key in keyData {
         maxValueWidthDict[key] = String(describing: data[key] ?? "").displayWidth
@@ -368,8 +461,11 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [Item]) -> (
     maxWidth: Int,
     widthInfo: [Int: Int]
     ) {
+    guard !data.isEmpty else {
+        return (numberOfItem: 0, maxWidth: 0, widthInfo: [:])
+    }
     let stringData = data.map { String($0) }
-    let maxWidth = stringData.sorted { $0.displayWidth > $1.displayWidth }.first!.displayWidth
+    let maxWidth = stringData.map { $0.displayWidth }.max() ?? 0
     var maxWidthDict: [Int: Int] = [:]
     for (index, item) in stringData.enumerated() {
         maxWidthDict[index] = item.displayWidth
@@ -382,15 +478,21 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
     maxWidth: Int,
     widthInfo: [Int: Int]
     ) {
+    guard !data.isEmpty else {
+        return (numberOfItem: 0, maxWidth: 0, widthInfo: [:])
+    }
     let flattened = Array(data.joined())
-    let maxWidth = String(flattened.sorted { String($0).displayWidth > String($1).displayWidth }.first!).displayWidth
-    let itemCount = data.sorted{ $0.count > $1.count }.first!.count
+    guard !flattened.isEmpty else {
+        return (numberOfItem: 0, maxWidth: 0, widthInfo: [:])
+    }
+    let maxWidth = flattened.map { String($0).displayWidth }.max() ?? 0
+    let itemCount = data.map { $0.count }.max() ?? 0
     var maxWidthDict: [Int: Int] = [:]
 
     for i in 0..<itemCount {
         if let items = data.column(index: i) {
-            let stringData = items.map {String(describing: $0)}
-            let maxCount = stringData.sorted{ $0.displayWidth > $1.displayWidth }.first!.displayWidth
+            let stringData = items.map { String(describing: $0) }
+            let maxCount = stringData.map { $0.displayWidth }.max() ?? 0
             maxWidthDict[i] = maxCount
         }
     }
