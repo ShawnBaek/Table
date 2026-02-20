@@ -1,5 +1,8 @@
-# Welcome to Table
-The table is a helper function to print the table.
+![Swift](https://img.shields.io/badge/Swift-6.1+-orange) ![Platforms](https://img.shields.io/badge/Platforms-macOS%20|%20iOS%20|%20tvOS%20|%20watchOS-blue) ![SPM](https://img.shields.io/badge/SPM-compatible-brightgreen) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+# Table
+
+Swift library for beautifully formatted table output — supports Unicode, CJK, emoji, and `os.Logger`.
 
 You can print the table bypassing the Any data!
 [e.g., `1d array`,` 2d array`, and `dictionary`]
