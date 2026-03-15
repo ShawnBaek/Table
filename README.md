@@ -134,32 +134,6 @@ The table is only supported SPM (Swift Package Management)
 ![Check Table Version](Images/installed.png)
 ![Done](Images/package.png)
 
-## iPad Playground Book
-I built playgroundbook using `nef`. You can check `./playgroundbook` folder.
-
-```console
-Clean up generated files for building ✓
-Creating swift playground structure (Table) ✓
-Downloading dependencies...... ✓
-    • Table
-Get modules from repositories...... ✓
-    • Table
-Building Swift Playground... ✓
-🙌 rendered Playground Book in './Table/playgroundbook/Table.playgroundbook'
-```
-
-Copy `Table.playgroundbook` into your `iCloud` folder like below and then open it on `iPad` Playground App
-
-![How to Install](Images/icloud.png)
-
-You can use it on your iPad Playground 😎
-
-![Print Table](Images/iPad.PNG)
-
-<video width="320" height="240" controls>
-  <source src="Images/iPad.mp4" type="video/mp4">
-</video>
-
 
 
 ## Table Style
