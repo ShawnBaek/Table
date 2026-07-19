@@ -54,22 +54,20 @@ extension Character {
             return 1
         }
 
-        // Check for emoji first (emoji should be width 2)
-        // Emoji with presentation selector (U+FE0F) or emoji presentation property
+        // Respect the grapheme's requested emoji or text presentation. This
+        // keeps joined emoji at two terminal columns without widening symbols
+        // such as the text-presentation airplane.
         if firstScalar.properties.isEmoji {
-            // Check for emoji presentation or variation selector
+            if unicodeScalars.contains(where: { $0.value == 0xFE0E }) {
+                return 1
+            }
             if firstScalar.properties.isEmojiPresentation ||
-               unicodeScalars.contains(where: { $0.value == 0xFE0F }) {
+                unicodeScalars.contains(where: { $0.value == 0xFE0F }) ||
+                unicodeScalars.contains(where: { $0.value == 0x20E3 }) ||
+                unicodeScalars.contains(where: { (0x1F1E6...0x1F1FF).contains($0.value) }) {
                 return 2
             }
-            // Common emoji ranges that should be width 2
-            let value = firstScalar.value
-            if (0x1F300...0x1F9FF).contains(value) ||  // Misc Symbols, Emoticons, etc.
-               (0x1FA00...0x1FAFF).contains(value) ||  // Extended-A
-               (0x2600...0x26FF).contains(value) ||    // Misc Symbols
-               (0x2700...0x27BF).contains(value) {     // Dingbats
-                return 2
-            }
+            return 1
         }
 
         let value = firstScalar.value
@@ -403,7 +401,7 @@ private struct BoxCharacters {
     for i in 0..<header.count {
         let width = distribution == .fillProportionally ? info.widthInfo[i]! : info.maxWidth
         let space = String(repeating: " ", count: width - header[i].displayWidth)
-        let item = "\(header[i])\(space)\(box.vertical)"
+        let item = " \(header[i])\(space) \(box.vertical)"
         row += item
     }
     print(row, to: &stream)
@@ -432,7 +430,7 @@ private struct BoxCharacters {
             itemCount = max(info.maxKeyWidth, info.maxValueWidth)
         }
         let space = String(repeating: " ", count: itemCount - header[i].displayWidth)
-        let item = "\(header[i])\(space)\(box.vertical)"
+        let item = " \(header[i])\(space) \(box.vertical)"
         row += item
     }
     print(row, to: &stream)
@@ -473,21 +471,21 @@ private struct BoxCharacters {
         let keyValue = escapeControlCharacters(String(describing: key))
         let keyWidth = distribution == .fillProportionally ? info.maxKeyWidth : maxWidth
         let keySpace = String(repeating: " ", count: max(0, keyWidth - keyValue.displayWidth))
-        let keyItem = "\(keyValue)\(keySpace)\(box.vertical)"
+        let keyItem = " \(keyValue)\(keySpace) \(box.vertical)"
         row += keyItem
         let value = escapeControlCharacters(String(describing: data[key] ?? ""))
         let valueWidth = distribution == .fillProportionally ? info.maxValueWidth : maxWidth
         let space = String(repeating: " ", count: max(0, valueWidth - value.displayWidth))
-        let item = "\(value)\(space)\(box.vertical)"
+        let item = " \(value)\(space) \(box.vertical)"
         row += item
         print(row, to: &stream)
         result.append("\(row)\n")
 
-        // Bottom or middle line
-        let linePosition: LinePosition = isLast ? .bottom : .middle
-        let horizontalLine = horizontal(numberOfItems: info.numberOfItem, keyWidth: info.maxKeyWidth, valueWidth: info.maxValueWidth, distribution: distribution, box: box, position: linePosition)
-        print(horizontalLine, to: &stream)
-        result.append("\(horizontalLine)\n")
+        if isLast {
+            let bottomLine = horizontal(numberOfItems: info.numberOfItem, keyWidth: info.maxKeyWidth, valueWidth: info.maxValueWidth, distribution: distribution, box: box, position: .bottom)
+            print(bottomLine, to: &stream)
+            result.append("\(bottomLine)\n")
+        }
     }
     return result
 }
@@ -515,7 +513,7 @@ private struct BoxCharacters {
         let width = distribution == .fillProportionally ? (info.widthInfo[i] ?? 0) : info.maxWidth
         let stringValue = escapeControlCharacters(String(data[i]))
         let space = String(repeating: " ", count: max(0, width - stringValue.displayWidth))
-        let item = "\(stringValue)\(space)\(box.vertical)"
+        let item = " \(stringValue)\(space) \(box.vertical)"
         row += item
     }
     print(row, to: &stream)
@@ -565,10 +563,10 @@ private struct BoxCharacters {
                 let stringValue = escapeControlCharacters(String(data[i][j]))
                 let spaceCount = max(0, width - stringValue.displayWidth)
                 let space = String(repeating: " ", count: spaceCount)
-                let item = "\(stringValue)\(space)\(box.vertical)"
+                let item = " \(stringValue)\(space) \(box.vertical)"
                 row += item
             } else {
-                let space = String(repeating: " ", count: width)
+                let space = String(repeating: " ", count: width + 2)
                 let item = "\(space)\(box.vertical)"
                 row += item
             }
@@ -576,11 +574,11 @@ private struct BoxCharacters {
         print(row, to: &stream)
         result.append("\(row)\n")
 
-        // Bottom or middle line
-        let linePosition: LinePosition = isLast ? .bottom : .middle
-        let horizontalLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution, box: box, position: linePosition)
-        print(horizontalLine, to: &stream)
-        result.append("\(horizontalLine)\n")
+        if isLast {
+            let bottomLine = horizontal(numberOfItems: info.numberOfItem, width: info.widthInfo, length: fullWidth, distribution: distribution, box: box, position: .bottom)
+            print(bottomLine, to: &stream)
+            result.append("\(bottomLine)\n")
+        }
     }
     return result
 }
@@ -665,7 +663,7 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
     var line = "\(leftCorner)"
     for i in 0..<numberOfItems {
         let cellWidth = distribution == .fillProportionally ? (width[i] ?? 0) : maxWidth
-        line += String(repeating: horizontal, count: cellWidth)
+        line += String(repeating: horizontal, count: cellWidth + 2)
         if i < numberOfItems - 1 {
             line += "\(junction)"
         }
@@ -697,7 +695,7 @@ private func tableInfo<Item: LosslessStringConvertible>(data: [[Item]]) -> (
         } else {
             cellWidth = maxWidth
         }
-        line += String(repeating: horizontal, count: cellWidth)
+        line += String(repeating: horizontal, count: cellWidth + 2)
         if i < numberOfItems - 1 {
             line += "\(junction)"
         }

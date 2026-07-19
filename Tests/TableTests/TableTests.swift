@@ -14,11 +14,11 @@ struct TableTests {
             header: ["Wed", "Thu", "Fri", "Sat"]
         )
         let expected = """
-            +----+---------+-----+-----+
-            |Wed |Thu      |Fri  |Sat  |
-            +----+---------+-----+-----+
-            |Good|Very Good|Happy|Cool!|
-            +----+---------+-----+-----+
+            +------+-----------+-------+-------+
+            | Wed  | Thu       | Fri   | Sat   |
+            +------+-----------+-------+-------+
+            | Good | Very Good | Happy | Cool! |
+            +------+-----------+-------+-------+
 
             """
         #expect(output == expected)
@@ -27,9 +27,9 @@ struct TableTests {
     @Test func arrayOfInt() {
         let output = print(table: [2, 94231, 241245125125])
         let expected = """
-            +-+-----+------------+
-            |2|94231|241245125125|
-            +-+-----+------------+
+            +---+-------+--------------+
+            | 2 | 94231 | 241245125125 |
+            +---+-------+--------------+
 
             """
         #expect(output == expected)
@@ -38,9 +38,9 @@ struct TableTests {
     @Test func arrayOfDouble() {
         let output = print(table: [2.0, 931, 214.24124])
         let expected = """
-            +---+-----+---------+
-            |2.0|931.0|214.24124|
-            +---+-----+---------+
+            +-----+-------+-----------+
+            | 2.0 | 931.0 | 214.24124 |
+            +-----+-------+-----------+
 
             """
         #expect(output == expected)
@@ -54,13 +54,12 @@ struct TableTests {
             header: ["Index", "Words"]
         )
         let expected = """
-            +-----+------+
-            |Index|Words |
-            +-----+------+
-            |1    |HELLOW|
-            +-----+------+
-            |2    |WOLLEH|
-            +-----+------+
+            +-------+--------+
+            | Index | Words  |
+            +-------+--------+
+            | 1     | HELLOW |
+            | 2     | WOLLEH |
+            +-------+--------+
 
             """
         #expect(output == expected)
@@ -72,15 +71,13 @@ struct TableTests {
             header: ["1", "2", "3"]
         )
         let expected = """
-            +----------------+------+-+
-            |1               |2     |3|
-            +----------------+------+-+
-            |1               |b2    | |
-            +----------------+------+-+
-            |Hellow          |Great!| |
-            +----------------+------+-+
-            |sdjfklsjdfklsadf|dsf   |1|
-            +----------------+------+-+
+            +------------------+--------+---+
+            | 1                | 2      | 3 |
+            +------------------+--------+---+
+            | 1                | b2     |   |
+            | Hellow           | Great! |   |
+            | sdjfklsjdfklsadf | dsf    | 1 |
+            +------------------+--------+---+
 
             """
         #expect(output == expected)
@@ -89,13 +86,11 @@ struct TableTests {
     @Test func twoDArrayOfIntWithDifferentColumns() {
         let output = print(table: [[1, 2, 3], [4, 5, 6], [7, 8, 9, 10]])
         let expected = """
-            +-+-+-+--+
-            |1|2|3|  |
-            +-+-+-+--+
-            |4|5|6|  |
-            +-+-+-+--+
-            |7|8|9|10|
-            +-+-+-+--+
+            +---+---+---+----+
+            | 1 | 2 | 3 |    |
+            | 4 | 5 | 6 |    |
+            | 7 | 8 | 9 | 10 |
+            +---+---+---+----+
 
             """
         #expect(output == expected)
@@ -110,11 +105,11 @@ struct TableTests {
             distribution: .fillEqually
         )
         let expected = """
-            +---------+---------+---------+---------+
-            |Wed      |Thu      |Fri      |Sat      |
-            +---------+---------+---------+---------+
-            |Good     |Very Good|Happy    |Cool!    |
-            +---------+---------+---------+---------+
+            +-----------+-----------+-----------+-----------+
+            | Wed       | Thu       | Fri       | Sat       |
+            +-----------+-----------+-----------+-----------+
+            | Good      | Very Good | Happy     | Cool!     |
+            +-----------+-----------+-----------+-----------+
 
             """
         #expect(output == expected)
@@ -126,9 +121,9 @@ struct TableTests {
             distribution: .fillEqually
         )
         let expected = """
-            +------------+------------+------------+
-            |2           |94231       |241245125125|
-            +------------+------------+------------+
+            +--------------+--------------+--------------+
+            | 2            | 94231        | 241245125125 |
+            +--------------+--------------+--------------+
 
             """
         #expect(output == expected)
@@ -140,9 +135,9 @@ struct TableTests {
             distribution: .fillEqually
         )
         let expected = """
-            +---------+---------+---------+
-            |2.0      |931.0    |214.24124|
-            +---------+---------+---------+
+            +-----------+-----------+-----------+
+            | 2.0       | 931.0     | 214.24124 |
+            +-----------+-----------+-----------+
 
             """
         #expect(output == expected)
@@ -155,13 +150,12 @@ struct TableTests {
             distribution: .fillEqually
         )
         let expected = """
-            +------+------+
-            |Index |Words |
-            +------+------+
-            |1     |HELLOW|
-            +------+------+
-            |2     |WOLLEH|
-            +------+------+
+            +--------+--------+
+            | Index  | Words  |
+            +--------+--------+
+            | 1      | HELLOW |
+            | 2      | WOLLEH |
+            +--------+--------+
 
             """
         #expect(output == expected)
@@ -174,15 +168,13 @@ struct TableTests {
             distribution: .fillEqually
         )
         let expected = """
-            +----------------+----------------+----------------+
-            |1               |2               |3               |
-            +----------------+----------------+----------------+
-            |1               |b2              |                |
-            +----------------+----------------+----------------+
-            |Hellow          |Great!          |                |
-            +----------------+----------------+----------------+
-            |sdjfklsjdfklsadf|dsf             |1               |
-            +----------------+----------------+----------------+
+            +------------------+------------------+------------------+
+            | 1                | 2                | 3                |
+            +------------------+------------------+------------------+
+            | 1                | b2               |                  |
+            | Hellow           | Great!           |                  |
+            | sdjfklsjdfklsadf | dsf              | 1                |
+            +------------------+------------------+------------------+
 
             """
         #expect(output == expected)
@@ -194,13 +186,11 @@ struct TableTests {
             distribution: .fillEqually
         )
         let expected = """
-            +--+--+--+--+
-            |1 |2 |3 |  |
-            +--+--+--+--+
-            |4 |5 |6 |  |
-            +--+--+--+--+
-            |7 |8 |9 |10|
-            +--+--+--+--+
+            +----+----+----+----+
+            | 1  | 2  | 3  |    |
+            | 4  | 5  | 6  |    |
+            | 7  | 8  | 9  | 10 |
+            +----+----+----+----+
 
             """
         #expect(output == expected)
@@ -255,12 +245,81 @@ struct UnicodeWidthTests {
             table: [["Hello", "你好"], ["World", "世界"]],
             header: ["EN", "CN"]
         )
-        // The table should render without crashing
-        // and contain both English and Chinese text
-        #expect(output.contains("Hello"))
-        #expect(output.contains("你好"))
-        #expect(output.contains("World"))
-        #expect(output.contains("世界"))
+        let expected = """
+            +-------+------+
+            | EN    | CN   |
+            +-------+------+
+            | Hello | 你好 |
+            | World | 世界 |
+            +-------+------+
+
+            """
+        #expect(output == expected)
+    }
+
+    @Test func englishChineseKoreanASCIIAlignment() {
+        let output = print(
+            table: [
+                ["Hello", "你好", "안녕하세요"],
+                ["World", "世界", "반갑습니다"]
+            ],
+            header: ["EN", "CN", "Korean"],
+            style: .ascii
+        )
+        let expected = """
+            +-------+------+------------+
+            | EN    | CN   | Korean     |
+            +-------+------+------------+
+            | Hello | 你好 | 안녕하세요 |
+            | World | 世界 | 반갑습니다 |
+            +-------+------+------------+
+
+            """
+        #expect(output == expected)
+    }
+
+    @Test func englishChineseKoreanUnicodeAlignment() {
+        let output = print(
+            table: [
+                ["Hello", "你好", "안녕하세요"],
+                ["World", "世界", "반갑습니다"]
+            ],
+            header: ["EN", "CN", "Korean"],
+            style: .unicode
+        )
+        let expected = """
+            ┌───────┬──────┬────────────┐
+            │ EN    │ CN   │ Korean     │
+            ├───────┼──────┼────────────┤
+            │ Hello │ 你好 │ 안녕하세요 │
+            │ World │ 世界 │ 반갑습니다 │
+            └───────┴──────┴────────────┘
+
+            """
+        #expect(output == expected)
+    }
+
+    @Test func twoLanguagesWithinSingleCellAlignment() {
+        let output = print(
+            table: [
+                ["안녕 Hello", "KR + EN"],
+                ["你好 Hello", "CN + EN"],
+                ["你好 안녕", "CN + KR"]
+            ],
+            header: ["Value", "Pair"],
+            style: .unicode
+        )
+        let expected = """
+            ┌────────────┬─────────┐
+            │ Value      │ Pair    │
+            ├────────────┼─────────┤
+            │ 안녕 Hello │ KR + EN │
+            │ 你好 Hello │ CN + EN │
+            │ 你好 안녕  │ CN + KR │
+            └────────────┴─────────┘
+
+            """
+        #expect(output == expected)
     }
 
     @Test func cjkSymbolsAndPunctuationWidth() {
@@ -268,6 +327,17 @@ struct UnicodeWidthTests {
         #expect("。".displayWidth == 2)  // Ideographic full stop
         #expect("、".displayWidth == 2)  // Ideographic comma
         #expect("「".displayWidth == 2)  // Left corner bracket
+    }
+
+    @Test func graphemeClusterDisplayWidths() {
+        #expect("✈".displayWidth == 1)
+        #expect("✈️".displayWidth == 2)
+        #expect("☕︎".displayWidth == 1)
+        #expect("é".displayWidth == 1)
+        #expect("👨‍👩‍👧‍👦".displayWidth == 2)
+        #expect("🇸🇬".displayWidth == 2)
+        #expect("1️⃣".displayWidth == 2)
+        #expect("क्‍ष".displayWidth == 1)
     }
 }
 
@@ -389,13 +459,12 @@ struct TableStyleTests {
             style: .unicode
         )
         let expected = """
-            ┌─┬─┐
-            │X│Y│
-            ├─┼─┤
-            │A│B│
-            ├─┼─┤
-            │C│D│
-            └─┴─┘
+            ┌───┬───┐
+            │ X │ Y │
+            ├───┼───┤
+            │ A │ B │
+            │ C │ D │
+            └───┴───┘
 
             """
         #expect(output == expected)
@@ -408,13 +477,12 @@ struct TableStyleTests {
             style: .ascii
         )
         let expected = """
-            +-+-+
-            |X|Y|
-            +-+-+
-            |A|B|
-            +-+-+
-            |C|D|
-            +-+-+
+            +---+---+
+            | X | Y |
+            +---+---+
+            | A | B |
+            | C | D |
+            +---+---+
 
             """
         #expect(output == expected)
@@ -437,8 +505,8 @@ struct VariableWidthTests {
         #expect(output.contains("This is a very long text that spans many characters"))
         #expect(output.contains("Short"))
         // Verify alignment - short values should be padded
-        #expect(output.contains("|A   |"))
-        #expect(output.contains("|X   |"))
+        #expect(output.contains("| A    |"))
+        #expect(output.contains("| X    |"))
     }
 
     @Test func tableWithEmptyCells() {
@@ -482,11 +550,11 @@ struct VariableWidthTests {
             ],
             style: .ascii
         )
-        #expect(output.contains("|A|"))
-        #expect(output.contains("|1|"))
-        #expect(output.contains("|X|"))
+        #expect(output.contains("| A |"))
+        #expect(output.contains("| 1 |"))
+        #expect(output.contains("| X |"))
         // Empty cells should be represented with spaces
-        #expect(output.contains("| |"))
+        #expect(output.contains("|   |"))
     }
 
     @Test func unicodeTableWithEmptyCellsOutput() {
@@ -495,11 +563,10 @@ struct VariableWidthTests {
             style: .unicode
         )
         let expected = """
-            ┌─┬─┬─┐
-            │A│ │C│
-            ├─┼─┼─┤
-            │ │B│ │
-            └─┴─┴─┘
+            ┌───┬───┬───┐
+            │ A │   │ C │
+            │   │ B │   │
+            └───┴───┴───┘
 
             """
         #expect(output == expected)
@@ -510,9 +577,9 @@ struct VariableWidthTests {
             table: [[""]],
             style: .unicode
         )
-        #expect(output.contains("┌┐"))
-        #expect(output.contains("││"))
-        #expect(output.contains("└┘"))
+        #expect(output.contains("┌──┐"))
+        #expect(output.contains("│  │"))
+        #expect(output.contains("└──┘"))
     }
 
     @Test func tableWithMixedUnicodeAndEmptyCells() {
@@ -549,9 +616,9 @@ struct VariableWidthTests {
             style: .unicode
         )
         let expected = """
-            ┌────┬───┬───┐
-            │Only│One│Row│
-            └────┴───┴───┘
+            ┌──────┬─────┬─────┐
+            │ Only │ One │ Row │
+            └──────┴─────┴─────┘
 
             """
         #expect(output == expected)
@@ -563,13 +630,11 @@ struct VariableWidthTests {
             style: .unicode
         )
         let expected = """
-            ┌─┐
-            │A│
-            ├─┤
-            │B│
-            ├─┤
-            │C│
-            └─┘
+            ┌───┐
+            │ A │
+            │ B │
+            │ C │
+            └───┘
 
             """
         #expect(output == expected)
