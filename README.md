@@ -43,55 +43,47 @@ print(table: ["1": 1, 2: "Hellow?", 1.2: 0, "I'm Table": [1, 2, 3, 2, 1]], heade
 ```
 
 ```swift
-+----+---------+-----+-----+
-|Wed |Thu      |Fri  |Sat  |
-+----+---------+-----+-----+
-|Good|Very Good|Happy|Cool!|
-+----+---------+-----+-----+
++------+-----------+-------+-------+
+| Wed  | Thu       | Fri   | Sat   |
++------+-----------+-------+-------+
+| Good | Very Good | Happy | Cool! |
++------+-----------+-------+-------+
 
-+-+-----+------------+
-|2|94231|241245125125|
-+-+-----+------------+
++---+-------+--------------+
+| 2 | 94231 | 241245125125 |
++---+-------+--------------+
 
-+---+-----+---------+
-|2.0|931.0|214.24124|
-+---+-----+---------+
++-----+-------+-----------+
+| 2.0 | 931.0 | 214.24124 |
++-----+-------+-----------+
 
-+-----+------+
-|Index|Words |
-+-----+------+
-|1    |HELLOW|
-+-----+------+
-|2    |WOLLEH|
-+-----+------+
++-------+--------+
+| Index | Words  |
++-------+--------+
+| 1     | HELLOW |
+| 2     | WOLLEH |
++-------+--------+
 
-+----------------+------+-+
-|1               |b2    | |
-+----------------+------+-+
-|Hellow          |Great!| |
-+----------------+------+-+
-|sdjfklsjdfklsadf|dsf   |1|
-+----------------+------+-+
++------------------+--------+---+
+| 1                | b2     |   |
+| Hellow           | Great! |   |
+| sdjfklsjdfklsadf | dsf    | 1 |
++------------------+--------+---+
 
-+-+-+-+--+
-|1|2|3|  |
-+-+-+-+--+
-|4|5|6|  |
-+-+-+-+--+
-|7|8|9|10|
-+-+-+-+--+
++---+---+---+----+
+| 1 | 2 | 3 |    |
+| 4 | 5 | 6 |    |
+| 7 | 8 | 9 | 10 |
++---+---+---+----+
 
-+---------+---------------+
-|key      |value          |
-+---------+---------------+
-|2        |Hellow?        |
-+---------+---------------+
-|I'm Table|[1, 2, 3, 2, 1]|
-+---------+---------------+
-|1.2      |0              |
-+---------+---------------+
-|1        |1              |
-+---------+---------------+
++-----------+-----------------+
+| key       | value           |
++-----------+-----------------+
+| 2         | Hellow?         |
+| I'm Table | [1, 2, 3, 2, 1] |
+| 1.2       | 0               |
+| 1         | 1               |
++-----------+-----------------+
 
 ```
 
@@ -102,11 +94,11 @@ The default distribution is `fillProportionally`.
 print(table: ["Good", "Very Good", "Happy", "Cool!"], header: ["Wed", "Thu", "Fri", "Sat"])
 ```
 ```swift
-+----+---------+-----+-----+
-|Wed |Thu      |Fri  |Sat  |
-+----+---------+-----+-----+
-|Good|Very Good|Happy|Cool!|
-+----+---------+-----+-----+
++------+-----------+-------+-------+
+| Wed  | Thu       | Fri   | Sat   |
++------+-----------+-------+-------+
+| Good | Very Good | Happy | Cool! |
++------+-----------+-------+-------+
 ```
 
 But It can be set by `fillEqually` like below
@@ -119,11 +111,11 @@ print(
 )
 ```
 ```swift
-+---------+---------+---------+---------+
-|Wed      |Thu      |Fri      |Sat      |
-+---------+---------+---------+---------+
-|Good     |Very Good|Happy    |Cool!    |
-+---------+---------+---------+---------+
++-----------+-----------+-----------+-----------+
+| Wed       | Thu       | Fri       | Sat       |
++-----------+-----------+-----------+-----------+
+| Good      | Very Good | Happy     | Cool!     |
++-----------+-----------+-----------+-----------+
 ```
 
 ## SPM Support
@@ -145,13 +137,12 @@ Choose between ASCII (default) or Unicode box-drawing characters:
 print(table: [["1", "Hello"], ["2", "World"]], header: ["ID", "Word"])
 ```
 ```
-+--+-----+
-|ID|Word |
-+--+-----+
-|1 |Hello|
-+--+-----+
-|2 |World|
-+--+-----+
++----+-------+
+| ID | Word  |
++----+-------+
+| 1  | Hello |
+| 2  | World |
++----+-------+
 ```
 
 ### Unicode Style (MySQL-like)
@@ -159,13 +150,12 @@ print(table: [["1", "Hello"], ["2", "World"]], header: ["ID", "Word"])
 print(table: [["1", "Hello"], ["2", "World"]], header: ["ID", "Word"], style: .unicode)
 ```
 ```
-┌──┬─────┐
-│ID│Word │
-├──┼─────┤
-│1 │Hello│
-├──┼─────┤
-│2 │World│
-└──┴─────┘
+┌────┬───────┐
+│ ID │ Word  │
+├────┼───────┤
+│ 1  │ Hello │
+│ 2  │ World │
+└────┴───────┘
 ```
 
 ## Multi-Language Support
@@ -175,18 +165,36 @@ Table correctly handles CJK characters, Korean Hangul, Japanese Kana, Arabic, an
 ```swift
 // Mixed language table with Unicode style
 print(table: [
-    ["Hello", "你好"],
-    ["World", "世界"]
-], header: ["EN", "CN"], style: .unicode)
+    ["Hello", "你好", "안녕하세요"],
+    ["World", "世界", "반갑습니다"]
+], header: ["EN", "CN", "Korean"], style: .unicode)
 ```
 ```
-┌─────┬────┐
-│EN   │CN  │
-├─────┼────┤
-│Hello│你好│
-├─────┼────┤
-│World│世界│
-└─────┴────┘
+┌───────┬──────┬────────────┐
+│ EN    │ CN   │ Korean     │
+├───────┼──────┼────────────┤
+│ Hello │ 你好 │ 안녕하세요 │
+│ World │ 世界 │ 반갑습니다 │
+└───────┴──────┴────────────┘
+```
+
+Multiple languages can also be mixed within the same value:
+
+```swift
+print(table: [
+    ["안녕 Hello", "KR + EN"],
+    ["你好 Hello", "CN + EN"],
+    ["你好 안녕", "CN + KR"]
+], header: ["Value", "Pair"], style: .unicode)
+```
+```
+┌────────────┬─────────┐
+│ Value      │ Pair    │
+├────────────┼─────────┤
+│ 안녕 Hello │ KR + EN │
+│ 你好 Hello │ CN + EN │
+│ 你好 안녕  │ CN + KR │
+└────────────┴─────────┘
 ```
 
 ### Emoji Support
@@ -195,9 +203,9 @@ print(table: [
 print(table: ["👋", "🎉", "🚀"], style: .unicode)
 ```
 ```
-┌──┬──┬──┐
-│👋│🎉│🚀│
-└──┴──┴──┘
+┌────┬────┬────┐
+│ 👋 │ 🎉 │ 🚀 │
+└────┴────┴────┘
 ```
 
 ## Control Character Handling
@@ -206,7 +214,7 @@ Control characters are automatically escaped to prevent layout corruption:
 
 ```swift
 print(table: ["Line1\nLine2", "Tab\there"])
-// Displays as: |Line1\nLine2|Tab\there|
+// Displays as: | Line1\nLine2 | Tab\there |
 ```
 
 ## Logger Integration
@@ -245,8 +253,8 @@ logger.table(["name": "Alice", "age": 30] as [AnyHashable: Any], header: ["key",
 
 ```swift
 // Choose table style (default: .unicode)
-logger.table(data, style: .ascii)    // +--+--+
-logger.table(data, style: .unicode)  // ┌──┬──┐
+logger.table(data, style: .ascii)    // +----+----+
+logger.table(data, style: .unicode)  // ┌────┬────┐
 
 // Choose log level (default: .info)
 logger.table(data, level: .debug)
@@ -258,13 +266,12 @@ logger.table(data, distribution: .fillEqually)
 
 Output in Console.app:
 ```
-┌─────┬───┐
-│Name │Age│
-├─────┼───┤
-│Alice│30 │
-├─────┼───┤
-│Bob  │25 │
-└─────┴───┘
+┌───────┬─────┐
+│ Name  │ Age │
+├───────┼─────┤
+│ Alice │ 30  │
+│ Bob   │ 25  │
+└───────┴─────┘
 ```
 
 ## What's the next step?!
@@ -286,4 +293,3 @@ Contributions to the Table are welcomed and encouraged!
 
 ## Contact Me
 If you have any questions about `Table`, please email me at shawn@shawnbaek.com
-
