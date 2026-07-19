@@ -54,9 +54,6 @@ extension Character {
             return 1
         }
 
-        // Respect the grapheme's requested emoji or text presentation. This
-        // keeps joined emoji at two terminal columns without widening symbols
-        // such as the text-presentation airplane.
         if firstScalar.properties.isEmoji {
             if unicodeScalars.contains(where: { $0.value == 0xFE0E }) {
                 return 1
